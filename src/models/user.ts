@@ -2,7 +2,7 @@ import * as knex from 'knex';
 
 export class UserModel {
 
-  tableName: string = 'q4u_users';
+  tableName: string = 'his_users';
 
   list(db: knex) {
     return db(this.tableName)

@@ -2,7 +2,12 @@ import * as knex from 'knex';
 
 export class LabsModel {
 
-    getInfo(db: knex) {
-        return db('lab').select('labcode', 'labname');
+    labInfo(db: knex) {
+        return db('lab').select('labcode', 'labname')
     }
+    selectLab(db: knex, labcode: any) {
+        return db('lab').select('labcode', 'labname')
+            .where('labcode', labcode)
+    }
+
 }

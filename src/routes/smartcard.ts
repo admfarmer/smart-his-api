@@ -3,21 +3,20 @@
 import * as Knex from 'knex';
 import * as fastify from 'fastify';
 
-import { LabsModel } from '../models/his/hi_lab';
+import { SmartcardModel } from '../models/smartcard';
 import * as HttpStatus from 'http-status-codes';
-const labsModel = new LabsModel();
+const smartcardModel = new SmartcardModel();
 
 const router = (fastify, { }, next) => {
 
-    var dbHIS: Knex = fastify.dbHIS;
+    var db: Knex = fastify.db;
 
     fastify.get('/', async (req: fastify.Request, reply: fastify.Reply) => {
-        reply.code(200).send({ message: 'Fastify, RESTful API services!' })
-    });
 
-    fastify.get('/info', async (req: fastify.Request, reply: fastify.Reply) => {
         try {
-            const rs: any = await labsModel.labInfo(dbHIS);
+            let rs: any = {};
+            rs = await smartcardModel.getSmartcard();
+
             reply.code(HttpStatus.OK).send({ info: rs })
         } catch (error) {
             console.log(error);

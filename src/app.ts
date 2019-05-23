@@ -154,10 +154,14 @@ if (process.env.DBHIS_TYPE === 'pg' || process.env.DBHIS_TYPE === 'mssql' || pro
 
 
 app.register(require('./routes/index'), { prefix: '/v1', logger: true });
+app.register(require('./routes/login'), { prefix: '/v1/login', logger: true });
+app.register(require('./routes/users'), { prefix: '/v1/users', logger: true });
 app.register(require('./routes/his_pt'), { prefix: '/v1/pt', logger: true });
 app.register(require('./routes/his_ovst'), { prefix: '/v1/ovst', logger: true });
 app.register(require('./routes/his_lab'), { prefix: '/v1/lab', logger: true });
+app.register(require('./routes/his_cln'), { prefix: '/v1/cln', logger: true });
 app.register(require('./routes/nhso'), { prefix: '/v1/nhso', logger: true });
+// app.register(require('./routes/smartcard'), { prefix: '/v1/smartcard', logger: true });
 
 app.get('/', async (req: fastify.Request, reply: fastify.Reply) => {
   reply.code(200).send({ message: 'Welcome to SMART HIS API services!', version: '1.0 build 20190522-1' })

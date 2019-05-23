@@ -3,9 +3,9 @@
 import * as Knex from 'knex';
 import * as fastify from 'fastify';
 
-import { LabsModel } from '../models/his/hi_lab';
+import { ClnsModel } from '../models/his/hi_cln';
 import * as HttpStatus from 'http-status-codes';
-const labsModel = new LabsModel();
+const clnsModel = new ClnsModel();
 
 const router = (fastify, { }, next) => {
 
@@ -17,7 +17,7 @@ const router = (fastify, { }, next) => {
 
     fastify.get('/info', async (req: fastify.Request, reply: fastify.Reply) => {
         try {
-            const rs: any = await labsModel.labInfo(dbHIS);
+            const rs: any = await clnsModel.clnInfo(dbHIS);
             reply.code(HttpStatus.OK).send({ info: rs })
         } catch (error) {
             console.log(error);
