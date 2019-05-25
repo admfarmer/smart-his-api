@@ -161,6 +161,7 @@ app.register(require('./routes/his_ovst'), { prefix: '/v1/ovst', logger: true })
 app.register(require('./routes/his_lab'), { prefix: '/v1/lab', logger: true });
 app.register(require('./routes/his_cln'), { prefix: '/v1/cln', logger: true });
 app.register(require('./routes/nhso'), { prefix: '/v1/nhso', logger: true });
+app.register(require('./routes/diag'), { prefix: '/v1/diag', logger: true });
 // app.register(require('./routes/smartcard'), { prefix: '/v1/smartcard', logger: true });
 
 app.get('/', async (req: fastify.Request, reply: fastify.Reply) => {

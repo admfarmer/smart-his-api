@@ -3,10 +3,15 @@
 import * as Knex from 'knex';
 import * as fastify from 'fastify';
 import * as moment from 'moment'
-
+import * as request from 'request';
 import { HiOvstModel } from '../models/his/hi_ovst'
+import { BotlineModel } from '../models/botline'
+import { DiagModel } from '../models/diag'
+
 import * as HttpStatus from 'http-status-codes';
 const hiOvstModel = new HiOvstModel();
+const diagModel = new DiagModel();
+const botlineModel = new BotlineModel();
 
 const router = (fastify, { }, next) => {
 
@@ -15,6 +20,37 @@ const router = (fastify, { }, next) => {
 
     fastify.get('/', async (req: fastify.Request, reply: fastify.Reply) => {
         reply.code(200).send({ message: 'Fastify, RESTful API services!' })
+    });
+
+    fastify.post('/getOvstdx', async (req: fastify.Request, reply: fastify.Reply) => {
+        let vn: any = [];
+        let x: any = [];
+        try {
+            const rxx: any = await diagModel.infoVn(db);
+            console.log(rxx);
+            if (rxx[0]) {
+                rxx.forEach(v => {
+                    x.push(v.vn)
+                });
+                vn = x;
+
+            } else {
+                vn = 'NO'
+            }
+
+            console.log(vn);
+
+            if (vn === 'NO') {
+                const rs: any = await hiOvstModel.getOvstdxs(dbHIS);
+                reply.code(HttpStatus.OK).send({ info: rs[0] })
+            } else {
+                const rs: any = await hiOvstModel.getOvstdx(dbHIS, vn);
+                reply.code(HttpStatus.OK).send({ info: rs[0] })
+            }
+        } catch (error) {
+            console.log(error);
+            reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+        }
     });
 
     fastify.post('/getOvst',
@@ -126,7 +162,6 @@ const router = (fastify, { }, next) => {
         });
 
     next();
-
 }
 
 module.exports = router;

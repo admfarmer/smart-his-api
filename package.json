@@ -11,6 +11,7 @@
     "dotenv": "^6.0.0",
     "easysoap": "^2.2.0",
     "event-stream": "^4.0.1",
+    "express": "^4.17.0",
     "fastify": "^1.11.2",
     "fastify-cors": "^0.1.0",
     "fastify-formbody": "^2.0.1",
