@@ -14,8 +14,6 @@
  Date: 25/05/2019 17:57:31
 */
 
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
 -- Table structure for his_diag
