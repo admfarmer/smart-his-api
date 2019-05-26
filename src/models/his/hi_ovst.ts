@@ -20,11 +20,13 @@ export class HiOvstModel {
         dx.icd10 as diag, dx.icd10name as diagname, 
         CONCAT(p.pname,p.fname,' ',p.lname) as fullname, 
         if(p.male=1,'ชาย','หญิง') as sex,
+        u.nameovstos as dchtype,
         CONCAT('บ้านเลขที่ ',p.addrpart,' ','หมู่ที่ ',p.moopart,' ','ตำบล',t.nametumb,' ','อำเภอ',a.nameampur) as address        
         FROM ovstdx as dx 
         INNER JOIN ovst as o on o.vn = dx.vn 
         INNER JOIN pt as p on p.hn = o.hn 
         left join hi.changwat as c on p.chwpart=c.chwpart
+        left join hi.ovstost as u on o.ovstost=u.ovstost
         left join hi.ampur as a on p.chwpart=a.chwpart and p.amppart=a.amppart
         left join hi.tumbon as t on p.chwpart=t.chwpart and p.amppart=t.amppart and p.tmbpart=t.tmbpart
         WHERE dx.icd10 in ('A90','A91') AND year(o.vstdttm) = '2019' AND o.vn not in (${vn})
@@ -40,11 +42,13 @@ export class HiOvstModel {
         dx.icd10 as diag, dx.icd10name as diagname, 
         CONCAT(p.pname,p.fname,' ',p.lname) as fullname, 
         if(p.male=1,'ชาย','หญิง') as sex,
+        u.nameovstos as dchtype,
         CONCAT('บ้านเลขที่ ',p.addrpart,' ','หมู่ที่ ',p.moopart,' ','ตำบล',t.nametumb,' ','อำเภอ',a.nameampur) as address        
         FROM ovstdx as dx 
         INNER JOIN ovst as o on o.vn = dx.vn 
         INNER JOIN pt as p on p.hn = o.hn 
         left join hi.changwat as c on p.chwpart=c.chwpart
+        left join hi.ovstost as u on o.ovstost=u.ovstost
         left join hi.ampur as a on p.chwpart=a.chwpart and p.amppart=a.amppart
         left join hi.tumbon as t on p.chwpart=t.chwpart and p.amppart=t.amppart and p.tmbpart=t.tmbpart
         WHERE dx.icd10 in ('A90','A91') AND year(o.vstdttm) = '2019'

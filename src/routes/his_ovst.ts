@@ -5,13 +5,11 @@ import * as fastify from 'fastify';
 import * as moment from 'moment'
 import * as request from 'request';
 import { HiOvstModel } from '../models/his/hi_ovst'
-import { BotlineModel } from '../models/botline'
 import { DiagModel } from '../models/diag'
 
 import * as HttpStatus from 'http-status-codes';
 const hiOvstModel = new HiOvstModel();
 const diagModel = new DiagModel();
-const botlineModel = new BotlineModel();
 
 const router = (fastify, { }, next) => {
 
@@ -27,7 +25,6 @@ const router = (fastify, { }, next) => {
         let x: any = [];
         try {
             const rxx: any = await diagModel.infoVn(db);
-            console.log(rxx);
             if (rxx[0]) {
                 rxx.forEach(v => {
                     x.push(v.vn)
@@ -37,9 +34,6 @@ const router = (fastify, { }, next) => {
             } else {
                 vn = 'NO'
             }
-
-            console.log(vn);
-
             if (vn === 'NO') {
                 const rs: any = await hiOvstModel.getOvstdxs(dbHIS);
                 reply.code(HttpStatus.OK).send({ info: rs[0] })

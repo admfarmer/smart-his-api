@@ -18,5 +18,8 @@ export class DiagModel {
     save(db: knex, datas: any, vn: any) {
         return db(this.tableName).insert(datas);
     }
+    async saveInfo(db: knex, datas: object) {
+        return await db(this.tableName).insert(datas);
+    }
 
 }

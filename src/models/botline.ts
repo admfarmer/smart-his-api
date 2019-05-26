@@ -1,8 +1,6 @@
 const request = require("request");
 export class BotlineModel {
     botLine(message) {
-        console.log(message);
-
         request({
             method: 'POST',
             uri: 'https://notify-api.line.me/api/notify',
@@ -23,13 +21,4 @@ export class BotlineModel {
             }
         })
     }
-
-    // async compareHash(password, hash) {
-    //   if (bcrypt.compareSync(password, hash)) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // }
-
 }
