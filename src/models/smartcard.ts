@@ -2,22 +2,18 @@ const request = require("request");
 export class SmartcardModel {
 
     getSmartcard() {
-        return new Promise((resolve: any, reject: any) => {
-            var options = {
-                method: 'GET',
-                url: `https://localhost:8443/smartcard/data/`,
-                json: true
-            };
+        console.log('------test--------');
 
-            request(options, function (error, response, body) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(body);
-                }
-            });
-        });
+        request({
+            method: 'GET',
+            uri: 'https://localhost:8443/smartcard/data/',
+            json: true
+        }, (err, httpResponse, body) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log(body)
+            }
+        })
     }
-
-
 }

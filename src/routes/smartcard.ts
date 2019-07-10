@@ -16,7 +16,6 @@ const router = (fastify, { }, next) => {
         try {
             let rs: any = {};
             rs = await smartcardModel.getSmartcard();
-
             reply.code(HttpStatus.OK).send({ info: rs })
         } catch (error) {
             console.log(error);

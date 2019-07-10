@@ -5,6 +5,7 @@ export class HiOvstModel {
     testConnection(db: knex) {
         return db.raw(`select 'HI Work'`);
     }
+
     getOvstInfo(db: knex, hn: any, vstdttm: any) {
         return db('ovst')
             .select('hn', 'vn', 'pttype', 'vstdttm', 'cln', db.raw('time(vstdttm) as vsttime'))
