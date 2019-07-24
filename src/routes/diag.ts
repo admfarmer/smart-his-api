@@ -9,6 +9,8 @@ const hiOvstModel = new HiOvstModel();
 
 import { DiagModel } from '../models/diag'
 import * as HttpStatus from 'http-status-codes';
+var cron = require('node-cron');
+
 const diagModel = new DiagModel();
 const botlineModel = new BotlineModel();
 
@@ -148,6 +150,85 @@ const router = (fastify, { }, next) => {
             reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
         }
     });
+
+    cron.schedule('*/1 * * * *', async function () {
+        console.log('running a task every minute');
+
+        let vn: any = [];
+        let vns: any = [];
+        let _vn: any = [];
+        let x: any = [];
+        let info: any;
+        let item: any = [];
+        let items: any = [];
+        const rxx: any = await diagModel.infoVn(db);
+        console.log(rxx[0]);
+        if (rxx[0]) {
+            rxx.forEach(v => {
+                x.push(v.vn)
+            });
+            vn = x;
+        } else {
+            vn = 'NO'
+        }
+        // console.log(vn);
+        if (vn === 'NO') {
+            const rs: any = await hiOvstModel.getOvstdxs(dbHIS);
+            item = rs[0];
+            if (!item) {
+                console.log('NO');
+                info = 'NO'
+                // reply.code(HttpStatus.OK).send({ info: 'NO' })
+            }
+            if (info != 'NO') {
+                console.log('OK');
+                // console.log(item);
+                item.forEach(v => {
+                    let message1 = v.fullname;
+                    let message2 = v.vstdttm;
+                    let message3 = v.drxtime;
+                    let message4 = v.diag;
+                    let message5 = v.diagname;
+                    let message6 = v.address;
+                    let message7 = v.dchtype;
+                    let messages = `ชื่อ-สกุล:${message1} วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] สถานะ: ${message7} ที่อยู่:${message6}`;
+                    // console.log(messages);
+                    items = diagModel.saveInfo(db, v);
+                    const rsx: any = botlineModel.botLine(messages);
+                });
+                // reply.code(HttpStatus.OK).send({ info: item })
+            }
+        } else {
+            const rs: any = await hiOvstModel.getOvstdx(dbHIS, vn);
+            item = rs[0];
+            // console.log(item);
+
+            if (!item) {
+                console.log('NO');
+                info = 'NO'
+                // reply.code(HttpStatus.OK).send({ info: 'NO' })
+            }
+            if (info != 'NO') {
+                console.log('OK');
+                // console.log(item);
+                item.forEach(v => {
+                    let message1 = v.fullname;
+                    let message2 = v.vstdttm;
+                    let message3 = v.drxtime;
+                    let message4 = v.diag;
+                    let message5 = v.diagname;
+                    let message6 = v.address;
+                    let message7 = v.dchtype;
+                    let messages = `ชื่อ-สกุล:${message1} วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] สถานะ: ${message7} ที่อยู่:${message6}`;
+                    items = diagModel.saveInfo(db, v);
+                    const rsx: any = botlineModel.botLine(messages);
+                });
+                // reply.code(HttpStatus.OK).send({ info: item })
+            }
+        }
+
+    });
+
     next();
 
 }
