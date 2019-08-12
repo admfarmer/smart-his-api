@@ -8,7 +8,8 @@ export class BotlineModel {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             auth: {
-                bearer: 'n9XdwQop63zVEdTvOkz4tGUz90LbIosbjmQYXVSM6EN', //token
+                // bearer: 'n9XdwQop63zVEdTvOkz4tGUz90LbIosbjmQYXVSM6EN', //token
+                bearer: '', //token test code
             },
             form: {
                 message: message, //ข้อความที่จะส่ง

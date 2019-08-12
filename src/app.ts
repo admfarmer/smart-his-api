@@ -153,6 +153,7 @@ if (process.env.DBHIS_TYPE === 'pg' || process.env.DBHIS_TYPE === 'mssql' || pro
 }
 
 
+app.register(require('./routes/kpi'), { prefix: '/v1/kpi', logger: true });
 app.register(require('./routes/index'), { prefix: '/v1', logger: true });
 app.register(require('./routes/login'), { prefix: '/v1/login', logger: true });
 app.register(require('./routes/users'), { prefix: '/v1/users', logger: true });
