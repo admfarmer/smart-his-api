@@ -3,6 +3,10 @@ import * as knex from 'knex';
 export class KpiYearsModel {
   tableName: string = 'kpi_years';
 
+  getSelect(db: knex) {
+    return db(this.tableName).select()
+  }
+
   getInfo(db: knex) {
     return db(this.tableName).select()
       .where('status', 'Y');

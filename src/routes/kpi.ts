@@ -25,9 +25,77 @@ const router = (fastify, { }, next) => {
     reply.code(200).send({ message: 'Welcome to SMART HIS API services!', version: '1.0 build 20190522-1' })
   });
 
+  fastify.get('/select', async (req: fastify.Request, reply: fastify.Reply) => {
+    try {
+      const rs: any = await kpiMainModel.getSelect(db);
+      reply.code(HttpStatus.OK).send({ info: rs })
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  });
+
   fastify.get('/info', async (req: fastify.Request, reply: fastify.Reply) => {
     try {
       const rs: any = await kpiMainModel.getInfo(db);
+      reply.code(HttpStatus.OK).send({ info: rs })
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  });
+
+  fastify.get('/kpidetail/:kpi_id', async (req: fastify.Request, reply: fastify.Reply) => {
+    const kpi_id = req.params.kpi_id;
+    try {
+      const rs: any = await kpiMainModel.getKpiDetail(db, kpi_id);
+      reply.code(HttpStatus.OK).send({ info: rs })
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  });
+
+
+  fastify.post('/insert', async (req: fastify.Request, reply: fastify.Reply) => {
+    const _info = req.body;
+
+    let info = {
+      kpi_stg_id: _info.kpi_stg_id,
+      kpi_name: _info.kpi_name,
+      kpi_detail: _info.kpi_detail,
+      kpi_type: _info.kpi_type,
+      kpi_scale: _info.kpi_scale,
+      owner: _info.owner,
+      kpi_status: _info.kpi_status || '1'
+    }
+
+    try {
+      const rs: any = await kpiMainModel.save(db, info);
+      reply.code(HttpStatus.OK).send({ info: rs })
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  });
+
+  fastify.put('/:kpi_id', async (req: fastify.Request, reply: fastify.Reply) => {
+    const _info = req.body;
+    const kpi_id = req.params.kpi_id;
+
+    let info = {
+      kpi_stg_id: _info.kpi_stg_id,
+      kpi_name: _info.kpi_name,
+      kpi_detail: _info.kpi_detail,
+      kpi_type: _info.kpi_type,
+      kpi_scale: _info.kpi_scale,
+      owner: _info.owner,
+      kpi_status: _info.kpi_status || '1'
+    }
+    console.log(_info, ':', kpi_id);
+
+    try {
+      const rs: any = await kpiMainModel.update(db, kpi_id, info);
       reply.code(HttpStatus.OK).send({ info: rs })
     } catch (error) {
       console.log(error);
@@ -92,6 +160,16 @@ const router = (fastify, { }, next) => {
     const stg_group_own = req.params.stg_group_own;
     try {
       const rs: any = await kpiStgGroupModel.getKpiStgGroupOwn(db, stg_group_own);
+      reply.code(HttpStatus.OK).send({ info: rs })
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  });
+
+  fastify.get('/years/select', async (req: fastify.Request, reply: fastify.Reply) => {
+    try {
+      const rs: any = await kpiYearsModel.getSelect(db);
       reply.code(HttpStatus.OK).send({ info: rs })
     } catch (error) {
       console.log(error);

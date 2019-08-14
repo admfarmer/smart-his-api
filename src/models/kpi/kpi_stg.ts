@@ -3,8 +3,12 @@ import * as knex from 'knex';
 export class KpiStgModel {
   tableName: string = 'kpi_stg';
 
+  getISelect(db: knex) {
+    return db(this.tableName).select()
+  }
   getInfo(db: knex) {
-    return db(this.tableName).select().where('stg_status', 'Y');
+    return db(this.tableName).select()
+      .where('stg_status', '1');
   }
 
   getKpiStgOwn(db: knex, stg_own: any) {
@@ -18,4 +22,21 @@ export class KpiStgModel {
       .where('stg_status', '1')
       .andWhere('stg_grp_id', stg_grp_id);
   }
+
+  save(db: knex, info: any) {
+    return db(this.tableName).insert(info);
+  }
+
+  update(db: knex, id: any, info: any) {
+    return db(this.tableName)
+      .where('id', id)
+      .update(info);
+  }
+
+  remove(db: knex, id: any) {
+    return db(this.tableName)
+      .where('id', id)
+      .del();
+  }
+
 }

@@ -3,6 +3,10 @@ import * as knex from 'knex';
 export class KpiDatasModel {
   tableName: string = 'kpi_datas';
 
+  getSelect(db: knex) {
+    return db(this.tableName).select()
+  }
+
   getInfo(db: knex) {
     return db(this.tableName).select()
       .where('status', 'Y');
