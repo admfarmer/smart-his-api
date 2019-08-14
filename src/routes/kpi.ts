@@ -281,7 +281,8 @@ const router = (fastify, { }, next) => {
       kpi_datas: _info.kpi_datas,
       kpi_works: _info.kpi_works,
       sdate: moment(_info.sdate).format('YYYY-MM-DD'),
-      status: _info.status || 'Y'
+      status: _info.status || 'Y',
+      user_works: _info.user_works
     }
     try {
       const rs: any = await kpiDatasModel.save(db, info);
@@ -301,7 +302,8 @@ const router = (fastify, { }, next) => {
       kpi_datas: _info.kpi_datas,
       kpi_works: _info.kpi_works,
       sdate: moment(_info.sdate).format('YYYY-MM-DD'),
-      status: _info.status || 'Y'
+      status: _info.status || 'Y',
+      user_works: _info.user_works
     }
 
     try {
