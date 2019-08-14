@@ -5,13 +5,14 @@ export class KpiDatasModel {
 
   getInfo(db: knex) {
     return db(this.tableName).select()
-      .where('status', '0');
+      .where('status', 'Y');
   }
 
-  getKpiDataYears(db: knex, years_id: any) {
+  getKpiDataYears(db: knex, years_id: any, kpi_id: any) {
     return db(this.tableName).select()
-      .where('status', '1')
+      .where('status', 'Y')
       .andWhere('years_id', years_id)
+      .andWhere('kpi_id', kpi_id)
   }
 
   save(db: knex, info: any) {

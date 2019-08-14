@@ -132,6 +132,45 @@ const router = (fastify, { }, next) => {
     }
   });
 
+  fastify.post('/years/insert', async (req: fastify.Request, reply: fastify.Reply) => {
+    const _info = req.body;
+
+    let info = {
+      quarter: _info.quarter,
+      year: _info.year,
+      status: _info.status || 'Y'
+    }
+
+    try {
+      const rs: any = await kpiYearsModel.save(db, info);
+      reply.code(HttpStatus.OK).send({ info: rs })
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  });
+
+  fastify.put('/years/:id', async (req: fastify.Request, reply: fastify.Reply) => {
+    const _info = req.body;
+    const id = req.params.id;
+
+    let info = {
+      quarter: _info.quarter,
+      year: _info.year,
+      status: _info.status || 'Y'
+    }
+    console.log(_info, ':', id);
+
+    try {
+      const rs: any = await kpiYearsModel.update(db, id, info);
+      reply.code(HttpStatus.OK).send({ info: rs })
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  });
+
+
   fastify.get('/datas/info', async (req: fastify.Request, reply: fastify.Reply) => {
     try {
       const rs: any = await kpiDatasModel.getInfo(db);
@@ -142,10 +181,11 @@ const router = (fastify, { }, next) => {
     }
   });
 
-  fastify.get('/datas/:years_id', async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.get('/datas/:years_id/:kpi_id', async (req: fastify.Request, reply: fastify.Reply) => {
     const years_id = req.params.years_id;
+    const kpi_id = req.params.kpi_id;
     try {
-      const rs: any = await kpiDatasModel.getKpiDataYears(db, years_id);
+      const rs: any = await kpiDatasModel.getKpiDataYears(db, years_id, kpi_id);
       reply.code(HttpStatus.OK).send({ info: rs })
     } catch (error) {
       console.log(error);
@@ -153,9 +193,30 @@ const router = (fastify, { }, next) => {
     }
   });
 
-  fastify.post('/datas', async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.post('/datas/insert', async (req: fastify.Request, reply: fastify.Reply) => {
     const _info = req.body;
+    // console.log(_info);
 
+    let info = {
+      years_id: _info.years_id,
+      kpi_id: _info.kpi_id,
+      kpi_datas: _info.kpi_datas,
+      kpi_works: _info.kpi_works,
+      sdate: moment(_info.sdate).format('YYYY-MM-DD'),
+      status: _info.status || 'Y'
+    }
+    try {
+      const rs: any = await kpiDatasModel.save(db, info);
+      reply.code(HttpStatus.OK).send({ info: rs })
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  });
+
+  fastify.put('/datas/:id', async (req: fastify.Request, reply: fastify.Reply) => {
+    const _info = req.body;
+    const id = req.params.id;
     let info = {
       years_id: _info.years_id,
       kpi_id: _info.kpi_id,
@@ -166,13 +227,8 @@ const router = (fastify, { }, next) => {
     }
 
     try {
-      if (_info.id) {
-        const rs: any = await kpiDatasModel.update(db, _info.id, info);
-        reply.code(HttpStatus.OK).send({ info: rs })
-      } else {
-        const rs: any = await kpiDatasModel.save(db, info);
-        reply.code(HttpStatus.OK).send({ info: rs })
-      }
+      const rs: any = await kpiDatasModel.update(db, id, info);
+      reply.code(HttpStatus.OK).send({ info: rs })
     } catch (error) {
       console.log(error);
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })

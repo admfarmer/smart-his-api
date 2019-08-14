@@ -10,14 +10,30 @@ export class KpiYearsModel {
 
   getKpiYearsOne(db: knex, quarter: any, year: any) {
     return db(this.tableName).select()
-      .where('kpi_status', '1')
+      .where('status', 'Y')
       .andWhere('quarter', quarter)
       .andWhere('year', year);
   }
 
   getKpiYears(db: knex, year: any) {
     return db(this.tableName).select()
-      .where('kpi_status', '1')
+      .where('status', 'Y')
       .andWhere('year', year);
+  }
+
+  save(db: knex, info: any) {
+    return db(this.tableName).insert(info);
+  }
+
+  update(db: knex, id: any, info: any) {
+    return db(this.tableName)
+      .where('id', id)
+      .update(info);
+  }
+
+  remove(db: knex, id: any) {
+    return db(this.tableName)
+      .where('id', id)
+      .del();
   }
 }
