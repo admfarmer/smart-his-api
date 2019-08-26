@@ -30,7 +30,7 @@ export class HiOvstModel {
         left join hi.ovstost as u on o.ovstost=u.ovstost
         left join hi.ampur as a on p.chwpart=a.chwpart and p.amppart=a.amppart
         left join hi.tumbon as t on p.chwpart=t.chwpart and p.amppart=t.amppart and p.tmbpart=t.tmbpart
-        WHERE dx.icd10 in ('A90','A91') AND year(o.vstdttm) = '2019' AND o.vn not in (${vn})
+        WHERE dx.icd10 in ('A90','A91','B084','B085') AND year(o.vstdttm) = '2019' AND o.vn not in (${vn})
         `;
         return db.raw(sql);
 
@@ -52,7 +52,7 @@ export class HiOvstModel {
         left join hi.ovstost as u on o.ovstost=u.ovstost
         left join hi.ampur as a on p.chwpart=a.chwpart and p.amppart=a.amppart
         left join hi.tumbon as t on p.chwpart=t.chwpart and p.amppart=t.amppart and p.tmbpart=t.tmbpart
-        WHERE dx.icd10 in ('A90','A91') AND year(o.vstdttm) = '2019'
+        WHERE dx.icd10 in ('A90','A91','B084','B085') AND year(o.vstdttm) = '2019'
         `;
         return db.raw(sql);
 
