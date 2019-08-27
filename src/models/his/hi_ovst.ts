@@ -1,16 +1,29 @@
 import * as knex from 'knex';
 
 export class HiOvstModel {
+    tableName: string = 'ovst';
 
     testConnection(db: knex) {
         return db.raw(`select 'HI Work'`);
     }
 
     getOvstInfo(db: knex, hn: any, vstdttm: any) {
-        return db('ovst')
+        return db(this.tableName)
             .select('hn', 'vn', 'pttype', 'vstdttm', 'cln', db.raw('time(vstdttm) as vsttime'))
             .where('hn', hn).andWhere('vstdttm', vstdttm)
             .limit(1);
+    }
+
+    getOvstViews(db: knex, hn: any, vstdttm: any) {
+        let sql = `
+        SELECT o.hn,o.vn,o.pttype,o.cln,date(o.vstdttm) as vstdttm ,time(o.vstdttm) as vsttime,
+        CONCAT(p.pname,p.fname,' ',p.lname) as fullname
+        from ovst as o
+        INNER JOIN pt as p on p.hn = o.hn 
+        WHERE date(o.vstdttm) = ${vstdttm} 
+        and o.hn = ${hn} and o.rcptno = '0'`;
+        return db.raw(sql);
+
     }
 
     getOvstdx(db: knex, vn: any[]) {
@@ -35,6 +48,7 @@ export class HiOvstModel {
         return db.raw(sql);
 
     }
+
     getOvstdxs(db: knex) {
         let sql = `
         SELECT dx.vn, o.hn, o.pttype, 
@@ -59,11 +73,18 @@ export class HiOvstModel {
     }
 
     saveOvst(db: knex, datas: any) {
-        return db('ovst').insert(datas);
+        return db(this.tableName)
+            .insert(datas);
     }
 
     saveOvstOn(db: knex, datas, table) {
-        return db(table).insert(datas);
+        return db(table)
+            .insert(datas);
+    }
+
+    updateOvst(db: knex, vn: any, info: any) {
+        let sql = `update ${this.tableName} set rcptno = ${info.rcptno} where vn = ${vn}`;
+        return db.raw(sql);
     }
 
 }
