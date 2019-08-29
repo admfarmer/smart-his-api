@@ -34,6 +34,7 @@ export class HiOvstModel {
         dx.icd10 as diag, dx.icd10name as diagname, 
         CONCAT(p.pname,p.fname,' ',p.lname) as fullname, 
         if(p.male=1,'ชาย','หญิง') as sex,
+        ROUND((date(o.vstdttm)-p.brthdate)/10000) as age,
         u.nameovstos as dchtype,
         CONCAT('บ้านเลขที่ ',p.addrpart,' ','หมู่ที่ ',p.moopart,' ','ตำบล',t.nametumb,' ','อำเภอ',a.nameampur) as address        
         FROM ovstdx as dx 
@@ -57,6 +58,7 @@ export class HiOvstModel {
         dx.icd10 as diag, dx.icd10name as diagname, 
         CONCAT(p.pname,p.fname,' ',p.lname) as fullname, 
         if(p.male=1,'ชาย','หญิง') as sex,
+        ROUND((date(o.vstdttm)-p.brthdate)/10000) as age,
         u.nameovstos as dchtype,
         CONCAT('บ้านเลขที่ ',p.addrpart,' ','หมู่ที่ ',p.moopart,' ','ตำบล',t.nametumb,' ','อำเภอ',a.nameampur) as address        
         FROM ovstdx as dx 
