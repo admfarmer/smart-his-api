@@ -59,7 +59,9 @@ const router = (fastify, { }, next) => {
                 let message5 = datas.diagname;
                 let message6 = datas.address;
                 let message7 = datas.dchtype;
-                let messages = `ชื่อ-สกุล:${message1} วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] สถานะ: ${message7} ที่อยู่:${message6}`;
+                let message8 = datas.age;
+                let message9 = datas.sex;
+                let messages = `ชื่อ-สกุล:${message1} เพศ:${message9} อายุ:${message8} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] สถานะ: ${message7} ที่อยู่:${message6}`;
                 // console.log(messages);
                 const rsx: any = await botlineModel.botLine(messages);
                 const rs: any = await diagModel.save(db, datas, vn);
@@ -112,7 +114,7 @@ const router = (fastify, { }, next) => {
                         let message7 = v.dchtype;
                         let message8 = v.age;
                         let message9 = v.sex;
-                        let messages = `ชื่อ-สกุล:${message1} เพศ:${message8} อายุ:${message9} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] สถานะ: ${message7} ที่อยู่:${message6}`;
+                        let messages = `ชื่อ-สกุล:${message1} เพศ:${message9} อายุ:${message8} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] สถานะ: ${message7} ที่อยู่:${message6}`;
                         // console.log(messages);
                         items = diagModel.saveInfo(db, v);
                         const rsx: any = botlineModel.botLine(messages);
@@ -142,7 +144,7 @@ const router = (fastify, { }, next) => {
                         let message7 = v.dchtype;
                         let message8 = v.age;
                         let message9 = v.sex;
-                        let messages = `ชื่อ-สกุล:${message1} เพศ:${message8} อายุ:${message9} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] สถานะ: ${message7} ที่อยู่:${message6}`;
+                        let messages = `ชื่อ-สกุล:${message1} เพศ:${message9} อายุ:${message8} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] สถานะ: ${message7} ที่อยู่:${message6}`;
                         items = diagModel.saveInfo(db, v);
                         const rsx: any = botlineModel.botLine(messages);
                     });
@@ -197,7 +199,7 @@ const router = (fastify, { }, next) => {
                     let message7 = v.dchtype;
                     let message8 = v.age;
                     let message9 = v.sex;
-                    let messages = `ชื่อ-สกุล:${message1} เพศ:${message8} อายุ:${message9} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] สถานะ: ${message7} ที่อยู่:${message6}`;
+                    let messages = `ชื่อ-สกุล:${message1} เพศ:${message9} อายุ:${message8} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] สถานะ: ${message7} ที่อยู่:${message6}`;
                     // console.log(messages);
                     items = diagModel.saveInfo(db, v);
                     const rsx: any = botlineModel.botLine(messages);
@@ -227,7 +229,7 @@ const router = (fastify, { }, next) => {
                     let message7 = v.dchtype;
                     let message8 = v.age;
                     let message9 = v.sex;
-                    let messages = `ชื่อ-สกุล:${message1} เพศ:${message8} อายุ:${message9} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] สถานะ: ${message7} ที่อยู่:${message6}`;
+                    let messages = `ชื่อ-สกุล:${message1} เพศ:${message9} อายุ:${message8} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] สถานะ: ${message7} ที่อยู่:${message6}`;
                     items = diagModel.saveInfo(db, v);
                     const rsx: any = botlineModel.botLine(messages);
                 });
