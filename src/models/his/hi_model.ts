@@ -41,7 +41,9 @@ export class HisHiModel {
         FROM ovst as o 
         INNER JOIN cln as c ON c.cln = o.cln 
         INNER JOIN pt as p	ON p.hn = o.hn
-        WHERE o.hn ='${hn}' ORDER BY date_serv DESC`);
+        WHERE o.hn = '${hn}' 
+        AND o.cln != '40100' 
+        ORDER BY date_serv DESC`);
     return data[0];
   }
 
