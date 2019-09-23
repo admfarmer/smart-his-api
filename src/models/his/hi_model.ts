@@ -42,6 +42,7 @@ export class HisHiModel {
         INNER JOIN cln as c ON c.cln = o.cln 
         INNER JOIN pt as p	ON p.hn = o.hn
         WHERE o.hn = '${hn}' 
+        AND dx.icd10 not in ('B20','B21','B22','B23','B24','Y05','Z21')
         ORDER BY date_serv DESC`);
     return data[0];
   }
@@ -133,6 +134,7 @@ export class HisHiModel {
         hi.lbbk as l 
         inner join hi.lab on l.labcode=lab.labcode and l.finish=1 and l.vn='${seq}'
         inner join hi.lablabel as lb on l.labcode = lb.labcode
+        where l.labcode not in ('038','068','271','177','327','243','344','259')
         group by l.ln,l.labcode,lb.filename,lb.fieldname
         ) as t `);
     return data[0];
