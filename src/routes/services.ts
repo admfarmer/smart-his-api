@@ -283,8 +283,9 @@ const router = (fastify, { }, next) => {
                 }
 
                 if (objService) {
-                    // console.log(objService);
-                    if (!objService.diagnosis && !objService.getProcedure) {
+                    console.log(objService.diagnosis);
+                    console.log(objService.procedure);
+                    if (!objService.diagnosis && !objService.procedure) {
                         objService = [null];
                     }
                     reply.send({ ok: true, rows: objService, profile: profile });
