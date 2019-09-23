@@ -41,9 +41,7 @@ export class HisHiModel {
         FROM ovst as o 
         INNER JOIN cln as c ON c.cln = o.cln 
         INNER JOIN pt as p	ON p.hn = o.hn
-        INNER JOIN ovstdx as dx	ON dx.vn = o.vn
         WHERE o.hn = '${hn}' 
-        AND dx.icd10 not in ('B20','B21','B22','B23','B24','Y05','Z21')
         ORDER BY date_serv DESC`);
     return data[0];
   }
@@ -65,7 +63,8 @@ export class HisHiModel {
       .select('c.chronic as icd_code', 'c.date_diag as start_date')
       .select(db.raw(`IF(i.name_t!='', i.name_t, "-") as icd_name`))
       .innerJoin('icd101 as i', 'i.icd10', '=', 'c.chronic')
-      .where('c.pid', hn);
+      .where('c.pid', hn)
+      .whereNotIn('i.icd10', ['B20', 'B21', 'B22', 'B23', 'B24', 'Y05', 'Z21']);
   }
 
 
@@ -76,7 +75,8 @@ export class HisHiModel {
       .select(db.raw(`IF(o.icd10name!='', o.icd10name, i.icd10name) as icd_name`))
       .innerJoin('ovst', 'ovst.vn', '=', 'o.vn')
       .innerJoin('icd101 as i', 'i.icd10', '=', 'o.icd10')
-      .where('o.vn', seq);
+      .where('o.vn', seq)
+      .whereNotIn('i.icd10', ['B20', 'B21', 'B22', 'B23', 'B24', 'Y05', 'Z21']);
   }
 
   getRefer(db: Knex, hn: any, dateServe: any, seq: any) {

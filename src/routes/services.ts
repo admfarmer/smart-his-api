@@ -283,6 +283,10 @@ const router = (fastify, { }, next) => {
                 }
 
                 if (objService) {
+                    // console.log(objService);
+                    if (!objService.diagnosis) {
+                        objService = [null];
+                    }
                     reply.send({ ok: true, rows: objService, profile: profile });
                 } else {
                     reply.send({ ok: false });
