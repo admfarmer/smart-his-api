@@ -41,6 +41,7 @@ export class HisHiModel {
         FROM ovst as o 
         INNER JOIN cln as c ON c.cln = o.cln 
         INNER JOIN pt as p	ON p.hn = o.hn
+        INNER JOIN ovstdx as dx	ON dx.vn = o.vn
         WHERE o.hn = '${hn}' 
         AND dx.icd10 not in ('B20','B21','B22','B23','B24','Y05','Z21')
         ORDER BY date_serv DESC`);
