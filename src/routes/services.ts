@@ -229,6 +229,7 @@ const router = (fastify, { }, next) => {
                                     "seq": rl.seq,
                                     "date_serv": moment(rl.date_serv).format('YYYY-MM-DD'),
                                     "time_serv": rl.time_serv,
+                                    "lab_code": rl.lab_code,
                                     "lab_name": rl.lab_name,
                                     "lab_result": rl.lab_result,
                                     "standard_result": rl.standard_result
