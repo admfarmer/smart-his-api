@@ -112,7 +112,7 @@ export class HisHiModel {
   async getLabs(db: Knex, hn: any, dateServe: any, seq: any) {
     let data = await db.raw(`
         SELECT
-        seq,date_serv,time_serv,labname,lab_test as lab_name,
+        seq,date_serv,time_serv,lab_code,lab_test as lab_name,
         hi.Get_Labresult(t.lab_table,t.labfield,t.lab_number) as lab_result,
         reference as standard_result
         FROM
@@ -120,7 +120,7 @@ export class HisHiModel {
         l.ln as lab_number,
         l.vn as seq,
         l.hn as hn,
-        lab.labname as labname,
+        lab.labname as lab_code,
         DATE_FORMAT(date(l.vstdttm),'%Y%m%d') as date_serv,	
         DATE_FORMAT(time(l.vstdttm),'%h:%i:%s') as time_serv,
 
