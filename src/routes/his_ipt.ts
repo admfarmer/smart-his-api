@@ -25,6 +25,16 @@ const router = (fastify, { }, next) => {
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
     }
   });
+  fastify.get('/infoAn/:an', async (req: fastify.Request, reply: fastify.Reply) => {
+    let an = req.params.an
+    try {
+      const rs: any = await hisModel.getIptVn(dbHIS, an);
+      reply.code(HttpStatus.OK).send({ info: rs })
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  });
 
   next();
 
