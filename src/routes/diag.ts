@@ -160,7 +160,7 @@ const router = (fastify, { }, next) => {
         }
     });
 
-    cron.schedule('*/60 * * * *', async function () {
+    cron.schedule('*/2 * * * *', async function () {
         console.log('running a task every minute');
 
         let vn: any = [];

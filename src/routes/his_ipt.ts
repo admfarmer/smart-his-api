@@ -1,22 +1,25 @@
 /// <reference path="../../typings.d.ts" />
+
 import * as Knex from 'knex';
 import * as fastify from 'fastify';
-import { SystemModel } from '../models/system';
+
+import { HiIptModel } from '../models/his/hi_ipt';
 import * as HttpStatus from 'http-status-codes';
-const systemModel = new SystemModel();
+const hisModel = new HiIptModel();
 
 const router = (fastify, { }, next) => {
 
-  var db: Knex = fastify.db;
+  var dbHIS: Knex = fastify.dbHIS;
 
   fastify.get('/', async (req: fastify.Request, reply: fastify.Reply) => {
-    reply.code(200).send({ message: 'Welcome to SMART HIS API services!', version: '1.0 build 20190522-1' })
+    reply.code(200).send({ message: 'Fastify, RESTful API services!' })
   });
 
-  fastify.get('/info', async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.get('/info/:hn', async (req: fastify.Request, reply: fastify.Reply) => {
+    let hn = req.params.hn
     try {
-      const rs: any = await systemModel.getInfo(db);
-      reply.code(HttpStatus.OK).send({ info: rs[0] })
+      const rs: any = await hisModel.getIptInfo(dbHIS, hn);
+      reply.code(HttpStatus.OK).send({ info: rs })
     } catch (error) {
       console.log(error);
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
