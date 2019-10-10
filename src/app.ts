@@ -167,6 +167,7 @@ app.register(require('./routes/smartcard'), { prefix: '/v1/smartcard', logger: t
 app.register(require('./routes/his_incoth'), { prefix: '/v1/incoth', logger: true });
 app.register(require('./routes/his_rcpt'), { prefix: '/v1/rcpt', logger: true });
 app.register(require('./routes/services'), { prefix: '/v1/services', logger: true });
+app.register(require('./routes/serv_anc'), { prefix: '/v1/ancview', logger: true });
 app.register(require('./routes/his_ipt'), { prefix: '/v1/ipt', logger: true });
 
 app.get('/', async (req: fastify.Request, reply: fastify.Reply) => {
