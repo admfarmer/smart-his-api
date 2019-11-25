@@ -43,7 +43,7 @@ export class HisAncModel {
         INNER JOIN cln as c ON c.cln = o.cln 
         INNER JOIN pt as p	ON p.hn = o.hn
         WHERE o.hn = '${hn}' 
-        AND dx.icd10 in ('Z340', 'Z348', 'Z349', 'Z350', 'Z351', 'Z352', 'Z353', 'Z354', 'Z355', 'Z356', 'Z357', 'Z358', 'Z359', 'Z390', 'Z391')
+        AND dx.icd10 in ('Z340', 'Z348', 'Z349', 'Z350', 'Z351', 'Z352', 'Z353', 'Z354', 'Z355', 'Z356', 'Z357', 'Z358', 'Z359', 'Z390', 'Z391','Z717')
         AND dx.cnt = '1'
         ORDER BY date_serv DESC`);
     return data[0];
@@ -136,7 +136,7 @@ export class HisAncModel {
         hi.lbbk as l 
         inner join hi.lab on l.labcode=lab.labcode and l.finish=1 and l.vn='${seq}'
         inner join hi.lablabel as lb on l.labcode = lb.labcode
-        where l.labcode not in ('038','068','271','177','327','243','344','259')
+        where l.labcode not in ('038','271','177','327','243','344','259')
         group by l.ln,l.labcode,lb.filename,lb.fieldname
         ) as t `);
     return data[0];
