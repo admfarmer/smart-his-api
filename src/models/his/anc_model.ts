@@ -136,7 +136,6 @@ export class HisAncModel {
         hi.lbbk as l 
         inner join hi.lab on l.labcode=lab.labcode and l.finish=1 and l.vn='${seq}'
         inner join hi.lablabel as lb on l.labcode = lb.labcode
-        where l.labcode not in ('038','271','177','327','243','344','259')
         group by l.ln,l.labcode,lb.filename,lb.fieldname
         ) as t `);
     return data[0];
