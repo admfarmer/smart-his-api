@@ -6,9 +6,10 @@ export class KpiStgModel {
   getISelect(db: knex) {
     return db(this.tableName).select()
   }
+
   getInfo(db: knex) {
     return db(this.tableName).select()
-      .where('stg_status', '1');
+      .where('stg_status', '1')
   }
 
   getKpiStgOwn(db: knex, stg_own: any) {
@@ -27,15 +28,15 @@ export class KpiStgModel {
     return db(this.tableName).insert(info);
   }
 
-  update(db: knex, id: any, info: any) {
+  update(db: knex, stg_id: any, info: any) {
     return db(this.tableName)
-      .where('id', id)
+      .where('stg_id', stg_id)
       .update(info);
   }
 
-  remove(db: knex, id: any) {
+  remove(db: knex, stg_id: any) {
     return db(this.tableName)
-      .where('id', id)
+      .where('stg_id', stg_id)
       .del();
   }
 

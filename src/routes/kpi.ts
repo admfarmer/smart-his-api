@@ -124,6 +124,16 @@ const router = (fastify, { }, next) => {
     }
   });
 
+  fastify.get('/stg/select', async (req: fastify.Request, reply: fastify.Reply) => {
+    try {
+      const rs: any = await kpiStgModel.getISelect(db);
+      reply.code(HttpStatus.OK).send({ info: rs })
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  });
+
   fastify.get('/stg/stgown/:stg_own', async (req: fastify.Request, reply: fastify.Reply) => {
     const stg_own = req.params.stg_own;
     try {
@@ -145,6 +155,49 @@ const router = (fastify, { }, next) => {
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
     }
   });
+
+  fastify.post('/stg/insert', async (req: fastify.Request, reply: fastify.Reply) => {
+    let _info = req.body;
+
+    let info = {
+      stg_id: _info.stg_id,
+      stg_name: _info.stg_name,
+      stg_detail: _info.stg_detail,
+      stg_own: _info.stg_own,
+      stg_status: _info.stg_status || '0'
+    }
+
+    try {
+      const rs: any = await kpiStgModel.save(db, info);
+      reply.code(HttpStatus.OK).send({ info: rs })
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  });
+
+  fastify.put('/stg/update/:stg_id', async (req: fastify.Request, reply: fastify.Reply) => {
+    let _info = req.body;
+    let stg_id = req.params.stg_id;
+    console.log(_info);
+
+    let info = {
+      // stg_grp_id: _info.stg_grp_id,
+      stg_name: _info.stg_name,
+      stg_detail: _info.stg_detail,
+      stg_own: _info.stg_own,
+      stg_status: _info.stg_status || '0'
+    }
+
+    try {
+      const rs: any = await kpiStgModel.update(db, stg_id, info);
+      reply.code(HttpStatus.OK).send({ info: rs })
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  });
+
 
   fastify.get('/stggroup/info', async (req: fastify.Request, reply: fastify.Reply) => {
     try {
