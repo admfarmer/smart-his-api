@@ -64,7 +64,7 @@ export class HisHiModel {
       .select(db.raw(`IF(i.name_t!='', i.name_t, "-") as icd_name`))
       .innerJoin('icd101 as i', 'i.icd10', '=', 'c.chronic')
       .where('c.pid', hn)
-      .whereNotIn('i.icd10', ['B20', 'B21', 'B22', 'B23', 'B24', 'Y05', 'Z21']);
+      .whereNotIn('i.icd10', ['B20', 'B21', 'B22', 'B23', 'B24', 'Y05', 'Z21', 'Z717']);
   }
 
 
@@ -76,7 +76,7 @@ export class HisHiModel {
       .innerJoin('ovst', 'ovst.vn', '=', 'o.vn')
       .innerJoin('icd101 as i', 'i.icd10', '=', 'o.icd10')
       .where('o.vn', seq)
-      .whereNotIn('i.icd10', ['B20', 'B21', 'B22', 'B23', 'B24', 'Y05', 'Z21']);
+      .whereNotIn('i.icd10', ['B20', 'B21', 'B22', 'B23', 'B24', 'Y05', 'Z21', 'Z717']);
   }
 
   getRefer(db: Knex, hn: any, dateServe: any, seq: any) {
@@ -135,7 +135,7 @@ export class HisHiModel {
         hi.lbbk as l 
         inner join hi.lab on l.labcode=lab.labcode and l.finish=1 and l.vn='${seq}'
         inner join hi.lablabel as lb on l.labcode = lb.labcode
-        where l.labcode not in ('038','068''271','177','327','243','344','259')
+        where l.labcode not in ('038','068','271','177','327','243','344','259')
         group by l.ln,l.labcode,lb.filename,lb.fieldname
         ) as t `);
     return data[0];
