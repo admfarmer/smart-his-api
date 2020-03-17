@@ -20,7 +20,7 @@ const router = (fastify, { }, next) => {
     reply.code(200).send({ message: 'Welcome to SMART HIS API services!', version: '1.0 build 20190522-1' })
   });
 
-  fastify.get('/selectDebtor/:startdate/:enddate', async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.get('/select/:startdate/:enddate', async (req: fastify.Request, reply: fastify.Reply) => {
     const startdate = req.params.startdate;
     const enddate = req.params.enddate;
 
