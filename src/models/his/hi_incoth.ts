@@ -63,7 +63,7 @@ export class HiIncothModel {
       left join hi.insure as s on o.pttype=s.pttype and o.hn=s.hn 
       left join hi.hospcode as c on s.hospmain=c.off_id 
       where date_format(o.vstdttm,'%Y-%m-%d') BETWEEN date_format( '${startdate}' ,'%Y-%m-%d') and date_format( '${enddate}' ,'%Y-%m-%d')
-      and o.pttype in ( '25','38')
+      and o.pttype in ( '35','38')
       group by o.vn
       order by hospmain
       `);
