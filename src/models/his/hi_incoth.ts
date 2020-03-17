@@ -59,7 +59,7 @@ export class HiIncothModel {
       hi.ovst as o 
       inner join hi.pt as p on o.hn=p.hn 
       inner join hi.incoth as i on o.vn=i.vn and o.an=0 
-      inner join hi.pttype as t on o.pttype=t.pttype and t.inscl = 'AAA' 
+      inner join hi.pttype as t on o.pttype=t.pttype
       left join hi.insure as s on o.pttype=s.pttype and o.hn=s.hn 
       left join hi.hospcode as c on s.hospmain=c.off_id 
       where date_format(o.vstdttm,'%Y-%m-%d') BETWEEN date_format( '${startdate}' ,'%Y-%m-%d') and date_format( '${enddate}' ,'%Y-%m-%d')
