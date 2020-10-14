@@ -115,7 +115,7 @@ export class HisAncModel {
     select
 		DATE_FORMAT(date(l.vstdttm),'%Y-%m-%d') as date_serv,
 		DATE_FORMAT(time(l.vstdttm),'%h:%i:%s') as time_serv,
-		r.lab_name as labgroup,
+		r.lab_name as lab_code,
 		replace(lb.fieldlabel,"'",'\`') as lab_name,
 		r.labresult as lab_result,
 		r.unit,
