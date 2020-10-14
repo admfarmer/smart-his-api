@@ -111,33 +111,20 @@ export class HisHiModel {
 
   async getLabs(db: Knex, hn: any, dateServe: any, seq: any) {
     let data = await db.raw(`
-        SELECT
-        seq,date_serv,time_serv,lab_code,lab_test as lab_name,
-        hi.Get_Labresult(t.lab_table,t.labfield,t.lab_number) as lab_result,
-        reference as standard_result
-        FROM
-        (SELECT DISTINCT
-        l.ln as lab_number,
-        l.vn as seq,
-        l.hn as hn,
-        lab.labname as lab_code,
-        DATE_FORMAT(date(l.vstdttm),'%Y%m%d') as date_serv,	
+        select
+        DATE_FORMAT(date(l.vstdttm),'%Y-%m-%d') as date_serv,
         DATE_FORMAT(time(l.vstdttm),'%h:%i:%s') as time_serv,
-
-        lb.fieldname as lab_code_local,
-        
-        replace(lb.fieldlabel,"'",'\`') as lab_test, lb.filename as lab_table,
-        lb.fieldname as labfield,
-        concat(lb.normal,' ',lb.unit) as reference,
-        replace(lab.labname,"'",'\`') as lab_group_name,
-        l.labcode as lab_group
-        FROM 
-        hi.lbbk as l 
-        inner join hi.lab on l.labcode=lab.labcode and l.finish=1 and l.vn='${seq}'
-        inner join hi.lablabel as lb on l.labcode = lb.labcode
-        where l.labcode not in ('038','068','271','177','327','243','344','259')
-        group by l.ln,l.labcode,lb.filename,lb.fieldname
-        ) as t `);
+        r.lab_name as lab_code,
+        replace(lb.fieldlabel,"'",'\`') as lab_name,
+        r.labresult as lab_result,
+        r.unit,
+        r.normal as standard_result
+        from
+        hi.labresult as r
+        inner join hi.lbbk as l on r.ln=l.ln and l.finish=1
+        inner join hi.lablabel as lb on r.labcode = lb.labcode and r.lab_code_local=lb.fieldname
+        where l.vn = '${seq}' and r.labcode not in ('038','068','271','177','327','243','344','259')
+        `);
     return data[0];
   }
 
