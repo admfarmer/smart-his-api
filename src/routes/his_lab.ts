@@ -158,7 +158,7 @@ const router = (fastify, { }, next) => {
                         let unit = v.unit;
                         let senddate = moment(v.senddate).format('YYYY-MM-DD');
 
-                        let messages = `ชื่อ-สกุล:${fullname} HN:${hn} Code Local:${lab_code_local} ปี Lab name :${lab_name} labresult :${labresult}[ ${unit} ] senddate: ${senddate}`;
+                        let messages = `ชื่อ-สกุล : ${fullname} HN : ${hn} | Code Local : ${lab_code_local} | Lab name : ${lab_name} | labresult : ${labresult} [ ${unit} ] | senddate : ${senddate}`;
                         console.log(messages);
                         items = labresultModel.saveInfo(db, v);
                         // const rsx: any = botlineModel.botLabresultLine(messages);
@@ -187,8 +187,8 @@ const router = (fastify, { }, next) => {
                         let unit = v.unit;
                         let senddate = moment(v.senddate).format('YYYY-MM-DD');
 
-                        let messages = `ชื่อ-สกุล:${fullname} HN:${hn} Code Local:${lab_code_local} ปี Lab name :${lab_name} labresult :${labresult}[ ${unit} ] senddate: ${senddate}`;
-                        console.log(messages);
+                        let messages = `ชื่อ-สกุล : ${fullname} HN : ${hn} | Code Local : ${lab_code_local} | Lab name : ${lab_name} | labresult : ${labresult} [ ${unit} ] | senddate : ${senddate}`;
+                        // console.log(messages);
                         items = labresultModel.saveInfo(db, v);
                         const rsx: any = botlineModel.botLabresultLine(messages);
                     });
