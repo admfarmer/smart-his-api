@@ -17,12 +17,22 @@ export class LvisitModel {
   }  
   
   async selectDate(db: knex,date:any) {
-    let data = await db.raw(`SELECT * FROM l_visit WHERE DATE(vstdttm) = '${date}' and status = 'Y'`);
+    let data = await db.raw(`
+    SELECT l_visit.* , pttype.namepttype , chospital.hosname FROM l_visit 
+    INNER JOIN chospital on chospital.hoscode = l_visit.hcode
+    INNER JOIN pttype on pttype.pttype = l_visit.pttype
+    WHERE DATE(l_visit.vstdttm) = '${date}' and l_visit.status = 'Y'
+    `);
     return data[0];
   }
 
   async selectHcodeDate(db: knex,hcode:any,date:any) {
-    let data = await db.raw(`SELECT * FROM l_visit WHERE hcode = '${hcode}' AND DATE(vstdttm) = '${date}' and status = 'Y'`);
+    let data = await db.raw(`    
+    SELECT l_visit.* , pttype.namepttype , chospital.hosname FROM l_visit 
+    INNER JOIN chospital on chospital.hoscode = l_visit.hcode
+    INNER JOIN pttype on pttype.pttype = l_visit.pttype 
+    WHERE l_visit.hcode = '${hcode}' AND DATE(l_visit.vstdttm) = '${date}' and l_visit.status = 'Y'
+    `);
     return data[0];
   }
 
