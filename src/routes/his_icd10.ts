@@ -3,9 +3,9 @@
 import * as Knex from 'knex';
 import * as fastify from 'fastify';
 
-import { ClnsModel } from '../models/his/hi_cln';
+import { Icd10Model } from '../models/his/hi_icd10';
 import * as HttpStatus from 'http-status-codes';
-const clnsModel = new ClnsModel();
+const icd10Model = new Icd10Model();
 
 const router = (fastify, { }, next) => {
 
@@ -17,7 +17,7 @@ const router = (fastify, { }, next) => {
 
     fastify.get('/info', async (req: fastify.Request, reply: fastify.Reply) => {
         try {
-            const rs: any = await clnsModel.clnInfo(dbHIS);
+            const rs: any = await icd10Model.icd10Info(dbHIS);
             reply.code(HttpStatus.OK).send({ info: rs })
         } catch (error) {
             console.log(error);
@@ -25,10 +25,10 @@ const router = (fastify, { }, next) => {
         }
     });
 
-    fastify.get('/infoCln/:cln', async (req: fastify.Request, reply: fastify.Reply) => {
-        let cln = req.params.cln;
+    fastify.get('/selectIcd10/:icd10', async (req: fastify.Request, reply: fastify.Reply) => {
+        let icd10 = req.params.icd10;
         try {
-            const rs: any = await clnsModel.selectCln(dbHIS,cln);
+            const rs: any = await icd10Model.selectIcd10(dbHIS,icd10);
             reply.code(HttpStatus.OK).send({ info: rs })
         } catch (error) {
             console.log(error);

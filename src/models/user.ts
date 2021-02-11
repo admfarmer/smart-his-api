@@ -6,12 +6,12 @@ export class UserModel {
 
   list(db: knex) {
     return db(this.tableName)
-      .select('user_id', 'username', 'fullname', 'is_active', 'user_type');
+      .select('user_id', 'username', 'fullname', 'is_active', 'user_type', 'hcode');
   }
 
   login(db: knex, username: string, password: string) {
     return db(this.tableName)
-      .select('fullname', 'user_id', 'user_type')
+      .select('fullname', 'user_id', 'user_type', 'hcode')
       .where({
         username: username,
         password: password,

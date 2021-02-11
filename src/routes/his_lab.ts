@@ -24,6 +24,17 @@ const router = (fastify, { }, next) => {
         reply.code(200).send({ message: 'Fastify, RESTful API services!' })
     });
 
+    fastify.get('/selectLab/:labcode', async (req: fastify.Request, reply: fastify.Reply) => {
+        let labcode = req.params.labcode
+        try {
+            const rs: any = await labsModel.selectLab(dbHIS,labcode);
+            reply.code(HttpStatus.OK).send({ info: rs })
+        } catch (error) {
+            console.log(error);
+            reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+        }
+    });
+
     fastify.get('/info', async (req: fastify.Request, reply: fastify.Reply) => {
         try {
             const rs: any = await labsModel.labInfo(dbHIS);

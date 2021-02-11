@@ -170,6 +170,10 @@ app.register(require('./routes/services'), { prefix: '/v1/services', logger: tru
 app.register(require('./routes/serv_anc'), { prefix: '/v1/ancview', logger: true });
 app.register(require('./routes/his_ipt'), { prefix: '/v1/ipt', logger: true });
 
+app.register(require('./routes/l_lbbk'), { prefix: '/v1/lbbk', logger: true });
+app.register(require('./routes/l_visit'), { prefix: '/v1/visit', logger: true });
+app.register(require('./routes/his_icd10'), { prefix: '/v1/icd10', logger: true });
+
 app.get('/', async (req: fastify.Request, reply: fastify.Reply) => {
   reply.code(200).send({ message: 'Welcome to SMART HIS API services!', version: '1.0 build 20190522-1' })
 });

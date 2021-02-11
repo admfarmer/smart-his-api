@@ -8,6 +8,8 @@ export class LabsModel {
             .select('labcode', 'labname')
     }
     selectLab(db: knex, labcode: any) {
+        console.log(labcode);
+        
         return db(this.tableName)
             .select('labcode', 'labname')
             .where('labcode', labcode)
@@ -62,4 +64,9 @@ export class LabsModel {
         return data[0];
 
     }
+    
+    async inSertLbbk(db: knex, info: any) {
+        return db('lbbk')
+            .insert(info);
+      }
 }

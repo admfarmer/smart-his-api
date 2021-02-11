@@ -83,6 +83,21 @@ export class HiOvstModel {
             .insert(datas);
     }
 
+    saveOvstDx(db: knex, datas: any) {
+        return db('ovstdx')
+            .insert(datas);
+    }
+
+    saveSign(db: knex, datas: any) {
+        return db('sign')
+            .insert(datas);
+    }
+    
+    saveIncoth(db: knex, datas: any) {
+        return db('incoth')
+            .insert(datas);
+    }
+
     saveOvstOn(db: knex, datas, table) {
         return db(table)
             .insert(datas);
