@@ -1,15 +1,15 @@
-import * as knex from 'knex';
+import { Knex } from 'knex';
 
 export class UserModel {
 
   tableName: string = 'his_users';
 
-  list(db: knex) {
+  list(db: Knex) {
     return db(this.tableName)
       .select('user_id', 'username', 'fullname', 'is_active', 'user_type', 'hcode');
   }
 
-  login(db: knex, username: string, password: string) {
+  login(db: Knex, username: string, password: string) {
     return db(this.tableName)
       .select('fullname', 'user_id', 'user_type', 'hcode')
       .where({
@@ -19,17 +19,17 @@ export class UserModel {
       });
   }
 
-  save(db: knex, user: any) {
+  save(db: Knex, user: any) {
     return db(this.tableName).insert(user);
   }
 
-  update(db: knex, userId: any, info: any) {
+  update(db: Knex, userId: any, info: any) {
     return db(this.tableName)
       .where('user_id', userId)
       .update(info);
   }
 
-  remove(db: knex, userId: any) {
+  remove(db: Knex, userId: any) {
     return db(this.tableName)
       .where('user_id', userId)
       .del();

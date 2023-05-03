@@ -1,10 +1,11 @@
 /// <reference path="../../typings.d.ts" />
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 import * as fastify from 'fastify';
 import * as moment from 'moment';
 // model
 import { HisAncModel } from './../models/his/anc_model';
 import * as HttpStatus from 'http-status-codes';
+import { log } from 'console';
 
 // ห้ามแก้ไข // 
 const hisModel = new HisAncModel();
@@ -75,20 +76,32 @@ const router = (fastify, { }, next) => {
     let providerCodeToken = hoscode;
     // if (requestId && hn && dateServ && uid) {
     if (hn && dateServ) {
+      console.log('hn=' + hn, ' : ', 'dateServ=' + dateServ);
+
       try {
-        let rs_hospital: any = await hisModel.getHospital(dbHIS, providerCodeToken, hn);
+        let rs_hospital: any = await hisModel.getHospital(dbHIS);
+        console.log('rs_hospital : ', rs_hospital);
+
         if (rs_hospital.length) {
           providerCode = rs_hospital[0].provider_code;
           providerName = rs_hospital[0].provider_name;
         }
         let rs_profile: any = await hisModel.getProfile(dbHIS, hn);;
+        console.log('rs_profile : ', rs_profile);
+
         if (rs_profile.length) {
           profile = rs_profile;
         }
-        const rs_vaccine: any = await hisModel.getVaccine(dbHIS, hn);
-        if (rs_vaccine.length) {
-          let vaccines: any = [];
-          for (const rv of rs_vaccine) {
+
+        // const rs_vaccine: any = await hisModel.getVaccine(dbHIS, hn);
+        const rs_vaccine_epi: any = await hisModel.getVaccineEpi(dbHIS, hn);
+        const rs_vaccine_ovst: any = await hisModel.getVaccineOvst(dbHIS, hn);
+        console.log('rs_vaccine_epi : ', rs_vaccine_epi);
+        console.log('rs_vaccine_ovst : ', rs_vaccine_ovst);
+        let vaccines: any = [];
+
+        if (rs_vaccine_epi.length) {
+          for (const rv of rs_vaccine_epi) {
             const objVcc = {
               // "request_id": requestId,
               // "uid": uid,
@@ -101,10 +114,32 @@ const router = (fastify, { }, next) => {
             }
             vaccines.push(objVcc);
           }
+          // objService.vaccines = vaccines;
+        }
+
+        if (rs_vaccine_ovst.length) {
+          for (const rv of rs_vaccine_ovst) {
+            const objVcc = {
+              // "request_id": requestId,
+              // "uid": uid,
+              "provider_code": providerCode,
+              "provider_name": providerName,
+              "date_serv": moment(rv.date_serv).format('YYYY-MM-DD'),
+              "time_serv": rv.time_serv,
+              "vaccine_code": rv.vaccine_code,
+              "vaccine_name": rv.vaccine_name
+            }
+            vaccines.push(objVcc);
+          }
+          // objService.vaccines = vaccines;
+        }
+        if (rs_vaccine_epi.length || rs_vaccine_ovst.length) {
           objService.vaccines = vaccines;
         }
 
         let rs_chronic: any = await hisModel.getChronic(dbHIS, hn);
+        console.log('rs_chronic : ', rs_chronic);
+
         if (rs_chronic.length) {
           let chronic: any = [];
           for (const rc of rs_chronic) {
@@ -124,6 +159,8 @@ const router = (fastify, { }, next) => {
         }
 
         let rs_allergy: any = await hisModel.getAllergyDetail(dbHIS, hn);
+        console.log('rs_allergy : ', rs_allergy);
+
         if (rs_allergy.length) {
           let allergy: any = [];
           for (const ra of rs_allergy) {
@@ -141,7 +178,7 @@ const router = (fastify, { }, next) => {
         }
 
         let rs_services: any = await hisModel.getServices(dbHIS, hn, dateServ);
-        // console.log('Service : ', rs_services);
+        console.log('Service : ', rs_services);
         if (rs_services.length) {
           const diagnosis = [];
           const drugs = [];
@@ -150,7 +187,9 @@ const router = (fastify, { }, next) => {
           const appointment = [];
           const refer = [];
           for (const v of rs_services) {
-            const rs_diagnosis = await hisModel.getDiagnosis(dbHIS, hn, dateServ, v.seq);
+            const rs_diagnosis = await hisModel.getDiagnosis(dbHIS, v.seq);
+            console.log('rs_diagnosis : ', rs_diagnosis);
+
             if (rs_diagnosis.length) {
               for (const rg of rs_diagnosis) {
                 const objDiagnosis = {
@@ -170,9 +209,14 @@ const router = (fastify, { }, next) => {
               objService.diagnosis = diagnosis;
             }
 
-            const rs_procedure = await hisModel.getProcedure(dbHIS, hn, dateServ, v.seq)
-            if (rs_procedure.length) {
-              for (const rp of rs_procedure) {
+            // const rs_procedure = await hisModel.getProcedure(dbHIS, hn, dateServ, v.seq)
+            const rs_procedure_ovst = await hisModel.getProcedureOvst(dbHIS, v.seq)
+            const rs_procedure_dtdx = await hisModel.getProcedureDtdx(dbHIS, v.seq)
+            console.log('rs_procedure_ovst : ', rs_procedure_ovst);
+            console.log('rs_procedure_dtdx : ', rs_procedure_dtdx);
+
+            if (rs_procedure_ovst.length) {
+              for (const rp of rs_procedure_ovst) {
                 const objProcedure = {
                   // "request_id": requestId,
                   // "uid": uid,
@@ -190,11 +234,36 @@ const router = (fastify, { }, next) => {
                 }
                 procedure.push(objProcedure);
               }
+              // objService.procedure = procedure;
+            }
+            if (rs_procedure_dtdx.length) {
+              for (const rp of rs_procedure_dtdx) {
+                const objProcedure = {
+                  // "request_id": requestId,
+                  // "uid": uid,
+                  "provider_code": providerCode,
+                  "provider_name": providerName,
+                  "seq": rp.seq,
+                  "date_serv": moment(rp.date_serv).format('YYYY-MM-DD'),
+                  "time_serv": rp.time_serv,
+                  "procedure_code": rp.procedure_code,
+                  "procedure_name": rp.procedure_name,
+                  "start_date": moment(rp.start_date).format('YYYY-MM-DD'),
+                  "start_time": rp.start_time,
+                  "end_date": rp.end_date ? moment(rp.end_date).format('YYYY-MM-DD') : rp.end_date,
+                  "end_time": rp.end_time
+                }
+                procedure.push(objProcedure);
+              }
+              // objService.procedure = procedure;
+            }
+            if (rs_procedure_ovst.length || rs_procedure_dtdx.length) {
               objService.procedure = procedure;
             }
 
+            const rs_drugs = await hisModel.getDrugs(dbHIS, v.seq);
+            console.log('rs_drugs : ', rs_drugs);
 
-            const rs_drugs = await hisModel.getDrugs(dbHIS, hn, dateServ, v.seq);
             if (rs_drugs.length) {
               for (const rd of rs_drugs) {
                 const objDrug = {
@@ -218,7 +287,9 @@ const router = (fastify, { }, next) => {
             }
 
 
-            const rs_lab = await hisModel.getLabs(dbHIS, hn, dateServ, v.seq);
+            const rs_lab = await hisModel.getLabs(dbHIS, v.seq);
+            console.log('rs_lab : ', rs_lab);
+
             if (rs_lab.length) {
               for (const rl of rs_lab) {
                 const objLab = {
@@ -239,7 +310,8 @@ const router = (fastify, { }, next) => {
               objService.lab = lab;
             }
 
-            const rs_apps = await hisModel.getAppointment(dbHIS, hn, dateServ, v.seq);
+            const rs_apps = await hisModel.getAppointment(dbHIS, v.seq);
+            console.log('rs_apps : ', rs_apps);
             if (rs_apps && rs_apps.length > 0) {
               for (const rs_app of rs_apps) {
                 const objAppointment = {
@@ -260,7 +332,8 @@ const router = (fastify, { }, next) => {
               objService.appointment = appointment;
             }
 
-            const rs_refers = await hisModel.getRefer(dbHIS, hn, dateServ, v.seq);
+            const rs_refers = await hisModel.getRefer(dbHIS, v.seq);
+            console.log('rs_refers : ', rs_refers);
             if (rs_refers && rs_refers.length > 0) {
               for (const rs_refer of rs_refers) {
                 const objRefer = {

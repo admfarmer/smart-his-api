@@ -1,5 +1,5 @@
 /// <reference path="../../typings.d.ts" />
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 import * as fastify from 'fastify';
 import * as moment from 'moment';
 // model
@@ -85,10 +85,16 @@ const router = (fastify, { }, next) => {
                 if (rs_profile.length) {
                     profile = rs_profile;
                 }
-                const rs_vaccine: any = await hisModel.getVaccine(dbHIS, hn);
-                if (rs_vaccine.length) {
-                    let vaccines: any = [];
-                    for (const rv of rs_vaccine) {
+
+                // const rs_vaccine: any = await hisModel.getVaccine(dbHIS, hn);
+                const rs_vaccine_epi: any = await hisModel.getVaccineEpi(dbHIS, hn);
+                const rs_vaccine_ovst: any = await hisModel.getVaccineOvst(dbHIS, hn);
+                console.log('rs_vaccine_epi : ', rs_vaccine_epi);
+                console.log('rs_vaccine_ovst : ', rs_vaccine_ovst);
+                let vaccines: any = [];
+
+                if (rs_vaccine_epi.length) {
+                    for (const rv of rs_vaccine_epi) {
                         const objVcc = {
                             // "request_id": requestId,
                             // "uid": uid,
@@ -101,26 +107,27 @@ const router = (fastify, { }, next) => {
                         }
                         vaccines.push(objVcc);
                     }
-                    objService.vaccines = vaccines;
+                    // objService.vaccines = vaccines;
                 }
 
-                let rs_chronic: any = await hisModel.getChronic(dbHIS, hn);
-                if (rs_chronic.length) {
-                    let chronic: any = [];
-                    for (const rc of rs_chronic) {
-                        const objCho = {
+                if (rs_vaccine_ovst.length) {
+                    for (const rv of rs_vaccine_ovst) {
+                        const objVcc = {
                             // "request_id": requestId,
                             // "uid": uid,
                             "provider_code": providerCode,
                             "provider_name": providerName,
-                            "time_serv": rc.time_serv,
-                            "icd_code": rc.icd_code,
-                            "icd_name": rc.icd_name,
-                            "start_date": moment(rc.start_date).format('YYYY-MM-DD')
+                            "date_serv": moment(rv.date_serv).format('YYYY-MM-DD'),
+                            "time_serv": rv.time_serv,
+                            "vaccine_code": rv.vaccine_code,
+                            "vaccine_name": rv.vaccine_name
                         }
-                        chronic.push(objCho);
+                        vaccines.push(objVcc);
                     }
-                    objService.chronic = chronic;
+                    // objService.vaccines = vaccines;
+                }
+                if (rs_vaccine_epi.length || rs_vaccine_ovst.length) {
+                    objService.vaccines = vaccines;
                 }
 
                 let rs_allergy: any = await hisModel.getAllergyDetail(dbHIS, hn);
@@ -170,9 +177,14 @@ const router = (fastify, { }, next) => {
                             objService.diagnosis = diagnosis;
                         }
 
-                        const rs_procedure = await hisModel.getProcedure(dbHIS, hn, dateServ, v.seq)
-                        if (rs_procedure.length) {
-                            for (const rp of rs_procedure) {
+                        // const rs_procedure = await hisModel.getProcedure(dbHIS, hn, dateServ, v.seq)
+                        const rs_procedure_ovst = await hisModel.getProcedureOvst(dbHIS, v.seq)
+                        const rs_procedure_dtdx = await hisModel.getProcedureDtdx(dbHIS, v.seq)
+                        console.log('rs_procedure_ovst : ', rs_procedure_ovst);
+                        console.log('rs_procedure_dtdx : ', rs_procedure_dtdx);
+
+                        if (rs_procedure_ovst.length) {
+                            for (const rp of rs_procedure_ovst) {
                                 const objProcedure = {
                                     // "request_id": requestId,
                                     // "uid": uid,
@@ -190,11 +202,34 @@ const router = (fastify, { }, next) => {
                                 }
                                 procedure.push(objProcedure);
                             }
+                            // objService.procedure = procedure;
+                        }
+                        if (rs_procedure_dtdx.length) {
+                            for (const rp of rs_procedure_dtdx) {
+                                const objProcedure = {
+                                    // "request_id": requestId,
+                                    // "uid": uid,
+                                    "provider_code": providerCode,
+                                    "provider_name": providerName,
+                                    "seq": rp.seq,
+                                    "date_serv": moment(rp.date_serv).format('YYYY-MM-DD'),
+                                    "time_serv": rp.time_serv,
+                                    "procedure_code": rp.procedure_code,
+                                    "procedure_name": rp.procedure_name,
+                                    "start_date": moment(rp.start_date).format('YYYY-MM-DD'),
+                                    "start_time": rp.start_time,
+                                    "end_date": rp.end_date ? moment(rp.end_date).format('YYYY-MM-DD') : rp.end_date,
+                                    "end_time": rp.end_time
+                                }
+                                procedure.push(objProcedure);
+                            }
+                            // objService.procedure = procedure;
+                        }
+                        if (rs_procedure_ovst.length || rs_procedure_dtdx.length) {
                             objService.procedure = procedure;
                         }
 
-
-                        const rs_drugs = await hisModel.getDrugs(dbHIS, hn, dateServ, v.seq);
+                        const rs_drugs = await hisModel.getDrugs(dbHIS, v.seq);
                         if (rs_drugs.length) {
                             for (const rd of rs_drugs) {
                                 const objDrug = {
@@ -218,7 +253,7 @@ const router = (fastify, { }, next) => {
                         }
 
 
-                        const rs_lab = await hisModel.getLabs(dbHIS, hn, dateServ, v.seq);
+                        const rs_lab = await hisModel.getLabs(dbHIS, v.seq);
                         if (rs_lab.length) {
                             for (const rl of rs_lab) {
                                 const objLab = {

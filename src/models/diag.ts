@@ -1,24 +1,24 @@
-import * as knex from 'knex';
+import { Knex } from 'knex';
 
 export class DiagModel {
     tableName: string = 'his_diag';
 
-    info(db: knex) {
+    info(db: Knex) {
         return db(this.tableName).select();
     }
 
-    infoVn(db: knex) {
+    infoVn(db: Knex) {
         return db(this.tableName).select('vn');
     }
 
-    select(db: knex, vn: any) {
+    select(db: Knex, vn: any) {
         return db(this.tableName).select().where('vn', vn);
     }
 
-    save(db: knex, datas: any, vn: any) {
+    save(db: Knex, datas: any, vn: any) {
         return db(this.tableName).insert(datas);
     }
-    async saveInfo(db: knex, datas: object) {
+    async saveInfo(db: Knex, datas: object) {
         return await db(this.tableName).insert(datas);
     }
 

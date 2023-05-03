@@ -1,9 +1,9 @@
-import * as knex from 'knex';
+import { Knex } from 'knex';
 
 export class HiIptModel {
   tableName: string = 'ipt';
 
-  getIptSelect(db: knex, limit: any, offset: any) {
+  getIptSelect(db: Knex, limit: any, offset: any) {
     return db('ipt')
       .select('ipt.hn', 'ipt.an', db.raw(`CONCAT(pt.pname, pt.fname, ' ', pt.lname) as fullname`),
         db.raw(`CONCAT(dct.fname, ' ', dct.lname) as doctorname`), 'idpm.nameidpm as ward', 'ipt.pttype', 'ipt.prediag', 'ipt.rgtdate',
@@ -18,7 +18,7 @@ export class HiIptModel {
       .offset(offset);
   }
 
-  getIptInfo(db: knex, hn: any) {
+  getIptInfo(db: Knex, hn: any) {
     return db('ipt')
       .select('ipt.hn', 'ipt.an', db.raw(`CONCAT(pt.pname, pt.fname, ' ', pt.lname) as fullname`), 'ipt.ward', 'ipt.pttype', 'ipt.prediag', 'ipt.rgtdate',
         db.raw('time(ipt.rgttime) as rgttime'), 'ipt.dchdate', 'ipt.daycnt')
@@ -27,7 +27,7 @@ export class HiIptModel {
       .orderBy('ipt.rgtdate', 'DESC');
   }
 
-  getIptVn(db: knex, an: any) {
+  getIptVn(db: Knex, an: any) {
     return db('ipt')
       .select('ipt.hn', 'ipt.an', db.raw(`CONCAT(pt.pname, pt.fname, ' ', pt.lname) as fullname`), 'ipt.ward', 'ipt.pttype', 'ipt.prediag', 'ipt.rgtdate',
         db.raw('time(ipt.rgttime) as rgttime'), 'ipt.dchdate', 'ipt.daycnt')

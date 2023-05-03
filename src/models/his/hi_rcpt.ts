@@ -1,18 +1,18 @@
-import * as knex from 'knex';
+import { Knex } from 'knex';
 
 export class RcptsModel {
   tableName: string = 'rcpt';
 
-  info(db: knex) {
+  info(db: Knex) {
     return db(this.tableName)
   }
 
-  save(db: knex, info: any) {
+  save(db: Knex, info: any) {
     return db(this.tableName)
       .insert(info);
   }
 
-  update(db: knex, rcptno: any, info: any) {
+  update(db: Knex, rcptno: any, info: any) {
     return db(this.tableName)
       .where('rcptno', rcptno)
       .update(info);

@@ -1,20 +1,20 @@
-import * as knex from 'knex';
+import { Knex } from 'knex';
 
 export class HiOvstModel {
     tableName: string = 'ovst';
 
-    testConnection(db: knex) {
+    testConnection(db: Knex) {
         return db.raw(`select 'HI Work'`);
     }
 
-    getOvstInfo(db: knex, hn: any, vstdttm: any) {
+    getOvstInfo(db: Knex, hn: any, vstdttm: any) {
         return db(this.tableName)
             .select('hn', 'vn', 'pttype', 'vstdttm', 'cln', db.raw('time(vstdttm) as vsttime'))
             .where('hn', hn).andWhere('vstdttm', vstdttm)
             .limit(1);
     }
 
-    getOvstViews(db: knex, hn: any, vstdttm: any) {
+    getOvstViews(db: Knex, hn: any, vstdttm: any) {
         let sql = `
         SELECT o.hn,o.vn,o.pttype,o.cln,date(o.vstdttm) as vstdttm ,time(o.vstdttm) as vsttime,
         CONCAT(p.pname,p.fname,' ',p.lname) as fullname
@@ -26,7 +26,7 @@ export class HiOvstModel {
 
     }
 
-    getOvstdx(db: knex, vn: any[]) {
+    getOvstdx(db: Knex, vn: any[]) {
         let sql = `
         SELECT dx.vn, o.hn, o.pttype, 
         date_format(o.vstdttm,'%Y-%m-%d') as vstdttm, 
@@ -52,7 +52,7 @@ export class HiOvstModel {
 
     }
 
-    getOvstdxs(db: knex) {
+    getOvstdxs(db: Knex) {
         let sql = `
         SELECT dx.vn, o.hn, o.pttype, 
         date_format(o.vstdttm,'%Y-%m-%d') as vstdttm, 
@@ -78,32 +78,32 @@ export class HiOvstModel {
 
     }
 
-    saveOvst(db: knex, datas: any) {
+    saveOvst(db: Knex, datas: any) {
         return db(this.tableName)
             .insert(datas);
     }
 
-    saveOvstDx(db: knex, datas: any) {
+    saveOvstDx(db: Knex, datas: any) {
         return db('ovstdx')
             .insert(datas);
     }
 
-    saveSign(db: knex, datas: any) {
+    saveSign(db: Knex, datas: any) {
         return db('sign')
             .insert(datas);
     }
     
-    saveIncoth(db: knex, datas: any) {
+    saveIncoth(db: Knex, datas: any) {
         return db('incoth')
             .insert(datas);
     }
 
-    saveOvstOn(db: knex, datas, table) {
+    saveOvstOn(db: Knex, datas, table) {
         return db(table)
             .insert(datas);
     }
 
-    updateOvst(db: knex, vn: any, info: any) {
+    updateOvst(db: Knex, vn: any, info: any) {
         let sql = `update ${this.tableName} set rcptno = ${info.rcptno} where vn = ${vn}`;
         return db.raw(sql);
     }

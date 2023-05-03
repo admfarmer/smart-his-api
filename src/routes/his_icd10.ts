@@ -1,6 +1,6 @@
 /// <reference path="../../typings.d.ts" />
 
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 import * as fastify from 'fastify';
 
 import { Icd10Model } from '../models/his/hi_icd10';

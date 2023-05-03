@@ -1,22 +1,22 @@
-import * as knex from 'knex';
+import { Knex } from 'knex';
 
 export class LvisitModel {
 
   tableName: string = 'l_visit';
 
-  list(db: knex) {
+  list(db: Knex) {
     return db(this.tableName);
   }  
   
-  listVn(db: knex,vn:any) {
+  listVn(db: Knex,vn:any) {
     return db(this.tableName).where('vn', vn);
   }
 
-  selectHcode(db: knex,hcode:any) {
+  selectHcode(db: Knex,hcode:any) {
     return db(this.tableName).where('hcode', hcode).andWhere('status','Y');
   }  
   
-  async selectDate(db: knex,date:any) {
+  async selectDate(db: Knex,date:any) {
     let data = await db.raw(`
     SELECT l_visit.* , pttype.namepttype , chospital.hosname FROM l_visit 
     INNER JOIN chospital on chospital.hoscode = l_visit.hcode
@@ -26,7 +26,7 @@ export class LvisitModel {
     return data[0];
   }
 
-  async selectHcodeDate(db: knex,hcode:any,date:any) {
+  async selectHcodeDate(db: Knex,hcode:any,date:any) {
     let data = await db.raw(`    
     SELECT l_visit.* , pttype.namepttype , chospital.hosname FROM l_visit 
     INNER JOIN chospital on chospital.hoscode = l_visit.hcode
@@ -36,21 +36,21 @@ export class LvisitModel {
     return data[0];
   }
 
-  selectHn(db: knex,hn:any) {
+  selectHn(db: Knex,hn:any) {
     return db(this.tableName).where('hn', hn);
   }
 
-  save(db: knex, info: any) {
+  save(db: Knex, info: any) {
     return db(this.tableName).insert(info);
   }
 
-  update(db: knex, vn: any, info: any) {
+  update(db: Knex, vn: any, info: any) {
     return db(this.tableName)
       .where('vn', vn)
       .update(info);
   }
 
-  remove(db: knex, vn: any) {
+  remove(db: Knex, vn: any) {
     return db(this.tableName)
       .where('vn', vn)
       .del();

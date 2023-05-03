@@ -1,8 +1,8 @@
-import * as knex from 'knex';
+import { Knex } from 'knex';
 
 export class SystemModel {
 
-  getInfo(db: knex) {
+  getInfo(db: Knex) {
     return db('his_system').select();
   }
 }

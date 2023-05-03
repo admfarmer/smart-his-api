@@ -8,7 +8,7 @@ import * as Knex from 'knex';
 
 require('dotenv').config({ path: path.join(__dirname, '../config') });
 
-import { Server, IncomingMessage, ServerResponse, ServerRequest } from 'http';
+import { Server, IncomingMessage, ServerResponse } from 'http';
 
 import helmet = require('fastify-helmet');
 
@@ -151,7 +151,6 @@ if (process.env.DBHIS_TYPE === 'pg' || process.env.DBHIS_TYPE === 'mssql' || pro
     connectionName: 'dbHIS'
   });
 }
-
 
 app.register(require('./routes/kpi'), { prefix: '/v1/kpi', logger: true });
 app.register(require('./routes/index'), { prefix: '/v1', logger: true });

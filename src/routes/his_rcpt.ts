@@ -1,6 +1,6 @@
 /// <reference path="../../typings.d.ts" />
 
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 import * as fastify from 'fastify';
 
 import { RcptsModel } from '../models/his/hi_rcpt';

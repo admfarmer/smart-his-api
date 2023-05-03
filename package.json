@@ -8,34 +8,34 @@
     "build": "npx tsc"
   },
   "dependencies": {
-    "dotenv": "^6.0.0",
+    "dotenv": "^6.2.0",
     "easysoap": "^2.2.0",
     "event-stream": "^4.0.1",
-    "express": "^4.17.0",
-    "fastify": "^1.11.2",
+    "express": "^4.17.1",
+    "fastify": "^1.14.6",
     "fastify-cors": "^0.1.0",
-    "fastify-formbody": "^2.0.1",
-    "fastify-helmet": "^2.1.0",
+    "fastify-formbody": "^2.1.0",
+    "fastify-helmet": "^2.2.0",
     "fastify-jwt": "^0.3.0",
-    "fastify-knexjs": "^1.0.9",
+    "fastify-knexjs": "^1.4.0",
     "fastify-no-icon": "^2.0.0",
     "fastify-rate-limit": "^0.3.0",
     "fastify-static": "^0.14.0",
-    "http-status-codes": "^1.3.0",
-    "jsonwebtoken": "^8.3.0",
-    "knex": "^0.15.2",
-    "moment": "^2.22.2",
-    "mysql": "^2.17.1",
+    "http-status-codes": "^1.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.95.6",
+    "moment": "^2.29.1",
+    "mysql": "^2.18.1",
     "node-cron": "^2.0.3",
-    "pg": "^7.4.3",
-    "random-js": "^2.0.0"
+    "pg": "^7.18.2",
+    "random-js": "^2.1.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^7.2.8",
-    "@types/knex": "^0.14.24",
-    "@types/node": "^10.9.4",
-    "nodemon": "^1.19.2",
+    "@types/knex": "^0.14.26",
+    "@types/node": "^10.17.60",
+    "nodemon": "^2.0.9",
     "ts-node": "^7.0.1",
-    "typescript": "^3.0.3"
+    "typescript": "^3.9.10"
   }
 }

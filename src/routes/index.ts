@@ -1,5 +1,5 @@
 /// <reference path="../../typings.d.ts" />
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 import * as fastify from 'fastify';
 import { SystemModel } from '../models/system';
 import * as HttpStatus from 'http-status-codes';

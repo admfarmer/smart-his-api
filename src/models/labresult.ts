@@ -1,24 +1,24 @@
-import * as knex from 'knex';
+import { Knex } from 'knex';
 
 export class LabresultModel {
     tableName: string = 'labresult';
 
-    info(db: knex) {
+    info(db: Knex) {
         return db(this.tableName).select();
     }
 
-    infoLn(db: knex) {
+    infoLn(db: Knex) {
         return db(this.tableName).select('ln').where('ln','<>','0');
     }
 
-    select(db: knex, ln: any) {
+    select(db: Knex, ln: any) {
         return db(this.tableName).select().where('ln', ln);
     }
 
-    save(db: knex, datas: any, ln: any) {
+    save(db: Knex, datas: any, ln: any) {
         return db(this.tableName).insert(datas);
     }
-    async saveInfo(db: knex, datas: object) {
+    async saveInfo(db: Knex, datas: object) {
         return await db(this.tableName).insert(datas);
     }
 
