@@ -109,7 +109,7 @@ const router = (fastify, { }, next) => {
 
     try {
       const rs: any = await hiOvstModel.getOvstViews(dbHIS, hn, vstdttm);
-      reply.code(HttpStatus.OK).send({ info: rs })
+      reply.code(HttpStatus.OK).send({ info: rs[0] })
     } catch (error) {
       console.log(error);
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
