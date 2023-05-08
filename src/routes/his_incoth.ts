@@ -73,7 +73,7 @@ const router = (fastify, { }, next) => {
 
     try {
       const rs: any = await hiIncothModel.getIncothSelect(db);
-      reply.code(HttpStatus.OK).send({ info: rs[0] })
+      reply.code(HttpStatus.OK).send({ info: rs })
     } catch (error) {
       console.log(error);
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
@@ -84,7 +84,7 @@ const router = (fastify, { }, next) => {
     const _info = req.body;
     try {
       const rs: any = await hiIncothModel.insertDebtorIncoth(db, _info);
-      reply.code(HttpStatus.OK).send({ info: rs[0] })
+      reply.code(HttpStatus.OK).send({ info: rs })
     } catch (error) {
       console.log(error);
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
@@ -96,7 +96,7 @@ const router = (fastify, { }, next) => {
     const vn = req.params.vn;
     try {
       const rs: any = await hiIncothModel.updateDebtorIncoth(db, vn, _info);
-      reply.code(HttpStatus.OK).send({ info: rs[0] })
+      reply.code(HttpStatus.OK).send({ info: rs })
     } catch (error) {
       console.log(error);
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
@@ -109,7 +109,7 @@ const router = (fastify, { }, next) => {
 
     try {
       const rs: any = await hiOvstModel.getOvstViews(dbHIS, hn, vstdttm);
-      reply.code(HttpStatus.OK).send({ info: rs[0] })
+      reply.code(HttpStatus.OK).send({ info: rs })
     } catch (error) {
       console.log(error);
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
@@ -122,7 +122,7 @@ const router = (fastify, { }, next) => {
 
     try {
       const rs: any = await hiIncothModel.getIncothInfo(dbHIS, hn, vstdttm);
-      reply.code(HttpStatus.OK).send({ info: rs[0] })
+      reply.code(HttpStatus.OK).send({ info: rs })
     } catch (error) {
       console.log(error);
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
@@ -134,7 +134,7 @@ const router = (fastify, { }, next) => {
 
     try {
       const rs: any = await hiIncothModel.getIncothVn(dbHIS, vn);
-      reply.code(HttpStatus.OK).send({ info: rs[0] })
+      reply.code(HttpStatus.OK).send({ info: rs })
     } catch (error) {
       console.log(error);
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
