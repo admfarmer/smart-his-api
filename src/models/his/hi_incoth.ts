@@ -4,13 +4,15 @@ export class HiIncothModel {
   tableName: string = 'incoth';
 
   getIncothInfo(db: Knex, hn: any, vstdttm: any) {
+    // console.log('vstdttm :',vstdttm);
+    
     return db(`incoth as i`)
     .select(`i.id`, `o.hn` , `i.vn` , `i.date` , `i.time` , `i.pttype` ,`p.namepttype`, `i.cgd` , `i.income`, `c.namecost` , `i.rcptamt`)
     .innerJoin(`ovst as o`,`o.vn`,`i.vn`)
     .innerJoin(`income as c`,`c.costcenter`,`i.income`)
     .innerJoin(`pttype as p`,`p.pttype`,`i.pttype`)
     .where(`o.hn`,hn)
-    .andWhereRaw(`date(o.vstdttm)`,vstdttm);
+    .andWhereRaw(`date(o.vstdttm) = ?`,[vstdttm]);
   }
 
   getIncothVn(db: Knex, vn: any) {
