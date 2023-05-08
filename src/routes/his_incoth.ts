@@ -73,7 +73,7 @@ const router = (fastify, { }, next) => {
 
     try {
       const rs: any = await hiIncothModel.getIncothSelect(db);
-      reply.code(HttpStatus.OK).send({ info: rs[0] })
+      reply.code(HttpStatus.OK).send({ info: rs })
     } catch (error) {
       console.log(error);
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
