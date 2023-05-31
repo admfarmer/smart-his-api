@@ -18,9 +18,11 @@ export class LabsModel {
     labresult(db: Knex){
         return db(`labresult`)
         .select(`labresult.*`,`pt.hn`,db.raw(`CONCAT(pt.pname,pt.fname,' ',pt.lname) as fullname`) ,`lbbk.senddate`)
-        .innerJoin(`lbbk`,`lbbk.ln`,`labresult.ln`)
+        .innerJoin(`lbbk`,function(){
+            this.on('lbbk.ln','labresult.ln').andOn(db.raw('date(lbbk.senddate) = date(Now())'))
+        })
         .innerJoin(`pt`,`pt.hn`,`lbbk.hn`)
-        .whereRaw(`(labresult.lab_code_local = 'fbs' and (labresult.labresult <= 70 or labresult.labresult >= 400) ) or
+        .where(db.raw(`(labresult.lab_code_local = 'fbs' and (labresult.labresult <= 70 or labresult.labresult >= 400) ) or
         (labresult.lab_code_local = 'bun' and (labresult.labresult > 100) ) or
         (labresult.lab_code_local = 'na' and (labresult.labresult < 120 or labresult.labresult >= 150) ) or
         (labresult.lab_code_local = 'k' and (labresult.labresult <= 3.0 or labresult.labresult >= 6.0) ) or
@@ -31,8 +33,8 @@ export class LabsModel {
         (labresult.lab_code_local = 'wbc' and labresult.lab_name = 'CBC' and (labresult.labresult <= 2000 or labresult.labresult >= 30000) ) or
         (labresult.lab_code_local = 'hb' and labresult.lab_name = 'CBC' and (labresult.labresult < 6.0 or labresult.labresult > 21.0) ) or
         (labresult.lab_code_local = 'hct' and labresult.lab_name = 'CBC' and (labresult.labresult < 20 or labresult.labresult >= 55) ) or
-        (labresult.lab_code_local = 'pltc' and labresult.lab_name = 'CBC' and (labresult.labresult < 50000 or labresult.labresult >= 500000) )`)
-        .whereRaw(`lbbk.senddate BETWEEN '2021-01-01' and DATE(NOW())`)
+        (labresult.lab_code_local = 'pltc' and labresult.lab_name = 'CBC' and (labresult.labresult < 50000 or labresult.labresult >= 500000) )
+        `))
         .groupBy(`labresult.lab_code_local`,`labresult.ln`);
 
     }
@@ -40,9 +42,11 @@ export class LabsModel {
     async labResultLn(db: Knex, ln: any[]) {
         return db(`labresult`)
         .select(`labresult.*`,`pt.hn`,db.raw(`CONCAT(pt.pname,pt.fname,' ',pt.lname) as fullname`) ,`lbbk.senddate`)
-        .innerJoin(`lbbk`,`lbbk.ln`,`labresult.ln`)
+        .innerJoin(`lbbk`,function(){
+            this.on('lbbk.ln','labresult.ln').andOn(db.raw('date(lbbk.senddate) = date(Now())'))
+        })
         .innerJoin(`pt`,`pt.hn`,`lbbk.hn`)
-        .whereRaw(`(labresult.lab_code_local = 'fbs' and (labresult.labresult <= 70 or labresult.labresult >= 400) ) or
+        .where(db.raw(`(labresult.lab_code_local = 'fbs' and (labresult.labresult <= 70 or labresult.labresult >= 400) ) or
         (labresult.lab_code_local = 'bun' and (labresult.labresult > 100) ) or
         (labresult.lab_code_local = 'na' and (labresult.labresult < 120 or labresult.labresult >= 150) ) or
         (labresult.lab_code_local = 'k' and (labresult.labresult <= 3.0 or labresult.labresult >= 6.0) ) or
@@ -53,7 +57,9 @@ export class LabsModel {
         (labresult.lab_code_local = 'wbc' and labresult.lab_name = 'CBC' and (labresult.labresult <= 2000 or labresult.labresult >= 30000) ) or
         (labresult.lab_code_local = 'hb' and labresult.lab_name = 'CBC' and (labresult.labresult < 6.0 or labresult.labresult > 21.0) ) or
         (labresult.lab_code_local = 'hct' and labresult.lab_name = 'CBC' and (labresult.labresult < 20 or labresult.labresult >= 55) ) or
-        (labresult.lab_code_local = 'pltc' and labresult.lab_name = 'CBC' and (labresult.labresult < 50000 or labresult.labresult >= 500000) )`)
+        (labresult.lab_code_local = 'pltc' and labresult.lab_name = 'CBC' and (labresult.labresult < 50000 or labresult.labresult >= 500000) )
+        
+        `))
         .whereNotIn(`lbbk.ln`,ln)
         .groupBy(`labresult.lab_code_local`,`labresult.ln`);
 
