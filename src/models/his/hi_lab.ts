@@ -86,7 +86,7 @@ export class LabsModel {
             (r.lab_code_local = 'pltc' and r.lab_name = 'CBC' and (r.labresult < 50000 or r.labresult >= 500000) )
 
         )
-        and l.senddate = CURRENT_DATE
+        and l.senddate = CURRENT_DATE()
         GROUP BY r.lab_code_local,r.ln
         `);
       return data[0];
@@ -112,7 +112,7 @@ export class LabsModel {
             (r.lab_code_local = 'pltc' and r.lab_name = 'CBC' and (r.labresult < 50000 or r.labresult >= 500000) )
 
             )
-        and l.senddate = CURRENT_DATE
+        and l.senddate = CURRENT_DATE()
         AND l.ln not in (${ln})
         GROUP BY r.lab_code_local,r.ln 
         `);
