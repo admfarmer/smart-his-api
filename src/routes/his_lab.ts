@@ -56,7 +56,6 @@ const router = (fastify, { }, next) => {
         let items: any = [];
         try {
             const rxx: any = await labresultModel.infoLn(db);
-            console.log(rxx[0]);
             if (rxx[0]) {
                 rxx.forEach(v => {
                     x.push(v.ln)
@@ -67,8 +66,8 @@ const router = (fastify, { }, next) => {
             }
             // console.log(vn);
             if (ln === 'NO') {
-                const rs: any = await labsModel.labresult(dbHIS);
-                item = rs[0];
+                const rs: any = await labsModel.labresult(dbHIS);                
+                item = rs;
                 if (!item) {
                     console.log('NO');
                     info = 'NO'
@@ -76,8 +75,7 @@ const router = (fastify, { }, next) => {
                 }
                 if (info != 'NO') {
                     console.log('OK');
-                    // console.log(item);
-                    item.forEach(v => {
+                    item.forEach(async (v:any) => {
                         let hn = v.hn;
                         let fullname = v.fullname;
                         let lab_code_local = v.lab_code_local;
@@ -87,17 +85,15 @@ const router = (fastify, { }, next) => {
                         let senddate = moment(v.senddate).format('YYYY-MM-DD');
 
                         let messages = `ชื่อ-สกุล:${fullname} HN:${hn} Code Local:${lab_code_local} ปี Lab name :${lab_name} labresult :${labresult}[ ${unit} ] senddate: ${senddate}`;
-                        console.log(messages);
-                        items = labresultModel.saveInfo(db, v);
-                        // const rsx: any = botlineModel.botLabresultLine(messages);
+                        // console.log(messages);
+                        items = await labresultModel.saveInfo(db, v);                        
+                        const rsx: any = botlineModel.botLabresultLine(messages);
                     });
                     reply.code(HttpStatus.OK).send({ info: item })
                 }
             } else {
                 const rs: any = await labsModel.labResultLn(dbHIS, ln);
-                item = rs[0];
-                // console.log(item);
-
+                item = rs;
                 if (!item) {
                     console.log('NO');
                     info = 'NO'
@@ -106,7 +102,7 @@ const router = (fastify, { }, next) => {
                 if (info != 'NO') {
                     console.log('OK');
                     // console.log(item);
-                    item.forEach(v => {
+                    item.forEach(async (v:any) => {
                         let hn = v.hn;
                         let fullname = v.fullname;
                         let lab_code_local = v.lab_code_local;
@@ -117,8 +113,8 @@ const router = (fastify, { }, next) => {
 
                         let messages = `ชื่อ-สกุล:${fullname} HN:${hn} Code Local:${lab_code_local} ปี Lab name :${lab_name} labresult :${labresult}[ ${unit} ] senddate: ${senddate}`;
                         console.log(messages);
-                        items = labresultModel.saveInfo(db, v);
-                        const rsx: any = botlineModel.botLabresultLine(messages);
+                        items = await labresultModel.saveInfo(db, v);
+                        // const rsx: any = botlineModel.botLabresultLine(messages);
                     });
                     reply.code(HttpStatus.OK).send({ info: item })
                 }
@@ -159,8 +155,8 @@ const router = (fastify, { }, next) => {
                 }
                 if (info != 'NO') {
                     console.log('OK');
-                    console.log(item);
-                    item.forEach(v => {
+                    // console.log(item);
+                    item.forEach((v:any) => {
                         let hn = v.hn;
                         let fullname = v.fullname;
                         let lab_code_local = v.lab_code_local;
@@ -189,7 +185,7 @@ const router = (fastify, { }, next) => {
                 if (info != 'NO') {
                     console.log('OK');
                     // console.log(item);
-                    item.forEach(v => {
+                    item.forEach((v:any) => {
                         let hn = v.hn;
                         let fullname = v.fullname;
                         let lab_code_local = v.lab_code_local;
