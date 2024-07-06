@@ -22,7 +22,7 @@ const app: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> = fa
 
 app.register(require('fastify-formbody'));
 app.register(require('fastify-cors'), {
-    origin: ['http://10.0.0.32/shos', 'http://tssmart.moph.go.th/shos'],
+    origin: ['http://10.0.0.32/shos', 'https://tssmart.moph.go.th/shos'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
     hook: 'preHandler',
