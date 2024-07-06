@@ -22,7 +22,7 @@ const router = (fastify, { }, next) => {
     fastify.get('/testenv', async (req: fastify.Request, reply: fastify.Reply) => {
 
         try {
-            reply.send({ ok: true, rows: dbHIS });
+            reply.send({ ok: true });
 
         } catch (error) {
             reply.send({ ok: false, error: error });
@@ -30,7 +30,7 @@ const router = (fastify, { }, next) => {
 
     });
 
-    fastify.post('/ovstInfo', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.post('/ovstInfo', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         const info = req.body;
         console.log(info);
         let profile: any = [];
@@ -42,14 +42,60 @@ const router = (fastify, { }, next) => {
                 if (profile[0].hn) {
                     visit = await hisModel.getOvstInfo(dbHIS, profile[0].hn);
                 }
-                reply.code(HttpStatus.OK).send({ info: profile, visit: visit })
+                let info_profile: any = [];
+                for(let x of profile) {
+                  let data:object = {
+                    "hn": x.hn,
+                    "cid": x.cid,
+                    "title_name": x.title_name,
+                    "first_name": x.first_name,
+                    "last_name": x.last_name,
+                    "pttype": x.pttype
+                  }
+                  await info_profile.push(data);
+                }
+                let info_visit: any = [];
+                for(let x of visit) {
+                  let data:object = {
+                    "seq": x.seq,
+                    "pid": x.pid,
+                    "date_serv": x.date_serv,
+                    "time_serv": x.time_serv,
+                    "department": x.department
+                  }
+                  await info_visit.push(data);
+                }
+                reply.code(HttpStatus.OK).send({ info: info_profile, visit: info_visit })
             } else if (info.cid) {
                 profile = await hisModel.getProfileCID(dbHIS, info.cid);
                 // console.log(profile[0].hn);
                 if (profile[0].hn) {
                     visit = await hisModel.getOvstInfo(dbHIS, profile[0].hn);
                 }
-                reply.code(HttpStatus.OK).send({ info: profile, visit: visit })
+                let info_profile: any = [];
+                for(let x of profile) {
+                  let data:object = {
+                    "hn": x.hn,
+                    "cid": x.cid,
+                    "title_name": x.title_name,
+                    "first_name": x.first_name,
+                    "last_name": x.last_name,
+                    "pttype": x.pttype
+                  }
+                  await info_profile.push(data);
+                }
+                let info_visit: any = [];
+                for(let x of visit) {
+                  let data:object = {
+                    "seq": x.seq,
+                    "pid": x.pid,
+                    "date_serv": x.date_serv,
+                    "time_serv": x.time_serv,
+                    "department": x.department
+                  }
+                  await info_visit.push(data);
+                }
+                reply.code(HttpStatus.OK).send({ info: info_profile, visit: info_visit })
             } else {
                 reply.code(200).send({ info: 'No data!' })
             }
@@ -60,9 +106,7 @@ const router = (fastify, { }, next) => {
         }
     });
 
-
-
-    fastify.get('/view/:hn/:dateServ', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.get('/view/:hn/:dateServ', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         let hn = req.params.hn;
         let dateServ = req.params.dateServ;
         // let uid = req.params.uid;
@@ -83,7 +127,19 @@ const router = (fastify, { }, next) => {
                 }
                 let rs_profile: any = await hisModel.getProfile(dbHIS, hn);;
                 if (rs_profile.length) {
-                    profile = rs_profile;
+                    let info:any = [];
+                    for(let x of rs_profile) {
+                      let data:object = {
+                        "hn": x.hn,
+                        "cid": x.cid,
+                        "title_name": x.title_name,
+                        "first_name": x.first_name,
+                        "last_name": x.last_name,
+                        "pttype": x.pttype
+                      }
+                      info.push(data);
+                    }
+                    profile = info;
                 }
 
                 // const rs_vaccine: any = await hisModel.getVaccine(dbHIS, hn);
@@ -340,7 +396,5 @@ const router = (fastify, { }, next) => {
     });
 
     next();
-
 }
-
 module.exports = router;

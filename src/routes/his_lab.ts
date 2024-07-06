@@ -24,29 +24,44 @@ const router = (fastify, { }, next) => {
         reply.code(200).send({ message: 'Fastify, RESTful API services!' })
     });
 
-    fastify.get('/selectLab/:labcode', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.get('/selectLab/:labcode', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         let labcode = req.params.labcode
         try {
             const rs: any = await labsModel.selectLab(dbHIS,labcode);
-            reply.code(HttpStatus.OK).send({ info: rs })
+            let info: any = [];
+            for(let x of rs) {
+              let data:object = {
+                "labcode": x.labcode,
+                "labname": x.labname,
+              }
+              await info.push(data);
+            }
+            reply.code(HttpStatus.OK).send({ info: info })
         } catch (error) {
             console.log(error);
             reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
         }
     });
 
-    fastify.get('/info', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.get('/info', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         try {
             const rs: any = await labsModel.labInfo(dbHIS);
-            reply.code(HttpStatus.OK).send({ info: rs })
+            let info: any = [];
+            for(let x of rs) {
+              let data:object = {
+                "labcode": x.labcode,
+                "labname": x.labname,
+              }
+              await info.push(data);
+            }
+            reply.code(HttpStatus.OK).send({ info: info })
         } catch (error) {
             console.log(error);
             reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
         }
     });
 
-
-    fastify.get('/lineInfo', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.get('/lineInfo', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         let ln: any = [];
         let vns: any = [];
         let _vn: any = [];
@@ -54,6 +69,7 @@ const router = (fastify, { }, next) => {
         let info: any;
         let item: any = [];
         let items: any = [];
+        let messages:string = '';
         try {
             const rxx: any = await labresultModel.infoLn(db);
             // console.log(rxx);
@@ -85,14 +101,14 @@ const router = (fastify, { }, next) => {
                         let unit = v.unit;
                         let senddate = moment(v.senddate).format('YYYY-MM-DD');
 
-                        let messages = `ชื่อ-สกุล:${fullname} HN:${hn} Code Local:${lab_code_local} ปี Lab name :${lab_name} labresult :${labresult}[ ${unit} ] senddate: ${senddate}`;
+                        messages = `ชื่อ-สกุล:${fullname} HN:${hn} Code Local:${lab_code_local} ปี Lab name :${lab_name} labresult :${labresult}[ ${unit} ] senddate: ${senddate}`;
                         // console.log(messages);
                         items = await labresultModel.saveInfo(db, v); 
-                        console.log(items);
+                        // console.log(items);
                                                
                         // const rsx: any = botlineModel.botLabresultLine(messages);
                     });
-                    reply.code(HttpStatus.OK).send({ info: item })
+                    reply.code(HttpStatus.OK).send({ info: messages })
                 }
             } else {
                 console.log('NO');
@@ -118,12 +134,12 @@ const router = (fastify, { }, next) => {
                         let unit = v.unit;
                         let senddate = moment(v.senddate).format('YYYY-MM-DD');
 
-                        let messages = `ชื่อ-สกุล:${fullname} HN:${hn} Code Local:${lab_code_local} ปี Lab name :${lab_name} labresult :${labresult}[ ${unit} ] senddate: ${senddate}`;
+                        messages = `ชื่อ-สกุล:${fullname} HN:${hn} Code Local:${lab_code_local} ปี Lab name :${lab_name} labresult :${labresult}[ ${unit} ] senddate: ${senddate}`;
                         // console.log(messages);
                         items = await labresultModel.saveInfo(db, v);
                         // const rsx: any = botlineModel.botLabresultLine(messages);
                     });
-                    reply.code(HttpStatus.OK).send({ info: item })
+                    reply.code(HttpStatus.OK).send({ info: messages })
                 }
             }
         } catch (error) {

@@ -5,7 +5,7 @@ export class KpiStgGroupModel {
 
   getInfo(db: Knex) {
     return db(this.tableName).select()
-      .where('stg_group_status', 'Y');
+      .where('stg_group_status', '1');
   }
 
   getKpiStgGroupOwn(db: Knex, stg_group_own: any) {

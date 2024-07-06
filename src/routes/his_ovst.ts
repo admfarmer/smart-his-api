@@ -16,11 +16,11 @@ const router = (fastify, { }, next) => {
     var dbHIS: Knex = fastify.dbHIS;
     var db: Knex = fastify.db;
 
-    fastify.get('/', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.get('/', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         reply.code(200).send({ message: 'Fastify, RESTful API services!' })
     });
 
-    fastify.post('/getOvstdx', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.post('/getOvstdx', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         let vn: any = [];
         let x: any = [];
         try {
@@ -36,7 +36,26 @@ const router = (fastify, { }, next) => {
             }
             if (vn === 'NO') {
                 const rs: any = await hiOvstModel.getOvstdxs(dbHIS);
-                reply.code(HttpStatus.OK).send({ info: rs[0] })
+                let info: any = [];
+                for(let x of rs) {
+                  let data:object = {
+                    "vn": x.vn,
+                    "hn": x.hn,
+                    "pttype": x.pttype,
+                    "vstdttm": x.vstdttm,
+                    "drxtime": x.drxtime,
+                    "diag": x.diag,
+                    "diagname": x.diagname,
+                    "symptom": x.symptom,
+                    "fullname": x.fullname,
+                    "sex": x.sex,
+                    "age": x.age,
+                    "dchtype": x.dchtype,
+                    "address": x.address
+                  }
+                  await info.push(data);
+                }
+                reply.code(HttpStatus.OK).send({ info: info[0] })
             } else {
                 const rs: any = await hiOvstModel.getOvstdx(dbHIS, vn);
                 reply.code(HttpStatus.OK).send({ info: rs[0] })
@@ -47,7 +66,7 @@ const router = (fastify, { }, next) => {
         }
     });
 
-    fastify.post('/getOvst', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.post('/getOvst', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         const hn = req.body.hn;
         const vstdttm = req.body.vstdttm;
         const cln = req.body.cln;
@@ -142,8 +161,11 @@ const router = (fastify, { }, next) => {
                     }
                     // console.log(table, datas)
                     ovstOne = await hiOvstModel.saveOvstOn(dbHIS, datas, table);
+
                 }
-                reply.code(HttpStatus.OK).send({ ovst: ovst, ovstOne: ovstOne })
+                let data_ovst:number = ovst;
+                let data_ovstOne:number = ovstOne;
+                reply.code(HttpStatus.OK).send({ ovst: data_ovst, ovstOne: data_ovstOne })
             } else {
                 reply.code(HttpStatus.OK).send({ info: 'ไม่พบข้อมูล' })
             }

@@ -15,21 +15,37 @@ const router = (fastify, { }, next) => {
         reply.code(200).send({ message: 'Fastify, RESTful API services!' })
     });
 
-    fastify.get('/info', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.get('/info', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         try {
             const rs: any = await clnsModel.clnInfo(dbHIS);
-            reply.code(HttpStatus.OK).send({ info: rs })
+            let info: any = [];
+            for(let x of rs) {
+              let data:object = {
+                "cln": x.cln,
+                "namecln": x.namecln,
+              }
+              await info.push(data);
+            }
+            reply.code(HttpStatus.OK).send({ info: info })
         } catch (error) {
             console.log(error);
             reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
         }
     });
 
-    fastify.get('/infoCln/:cln', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.get('/infoCln/:cln', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         let cln = req.params.cln;
         try {
             const rs: any = await clnsModel.selectCln(dbHIS,cln);
-            reply.code(HttpStatus.OK).send({ info: rs })
+            let info: any = [];
+            for(let x of rs) {
+              let data:object = {
+                "cln": x.cln,
+                "namecln": x.namecln,
+              }
+              await info.push(data);
+            }
+            reply.code(HttpStatus.OK).send({ info: info })
         } catch (error) {
             console.log(error);
             reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })

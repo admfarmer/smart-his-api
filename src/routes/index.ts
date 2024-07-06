@@ -13,10 +13,19 @@ const router = (fastify, { }, next) => {
     reply.code(200).send({ message: 'Welcome to SMART HIS API services!', version: '1.0 build 20190522-1' })
   });
 
-  fastify.get('/info', async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.get('/info', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
     try {
       const rs: any = await systemModel.getInfo(db);
-      reply.code(HttpStatus.OK).send({ info: rs[0] })
+      let info: any = [];
+      for(let x of rs) {
+        let data:object = {
+          "hoscode": x.hoscode,
+          "hosname": x.hosname,
+          "topic": x.topic
+        }
+        await info.push(data);
+      }
+      reply.code(HttpStatus.OK).send({ info: info[0] })
     } catch (error) {
       console.log(error);
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })

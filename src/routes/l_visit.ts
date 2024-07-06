@@ -25,63 +25,175 @@ const router = (fastify, { }, next) => {
   var dbHIS: Knex = fastify.dbHIS;
   var db: Knex = fastify.db;
 
-  fastify.get('/', { preHandler: [fastify.authenticate, fastify.verifyAdmin] }, async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.get('/', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
 
     try {
       const rs: any = await lvisitModel.list(db);
-      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK, results: rs })
+      let info: any = [];
+      for(let x of rs) {
+        let data:object = {
+          "vn": x.vn,
+          "hn": x.hn,
+          "cid": x.cid,
+          "vstdttm": x.vstdttm,
+          "icd10": x.icd10,
+          "cc": x.cc,
+          "cln": x.cln,
+          "pttype": x.pttype,
+          "pname": x.pname,
+          "fname": x.fname,
+          "lname": x.lname,
+          "sex": x.sex,
+          "birthdate": x.birthdate,
+          "hcode": x.hcode,
+          "status": x.status,
+          "accepted": x.accepted
+        }
+        await info.push(data);
+      }
+      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK, results: info })
     } catch (error) {
       fastify.log.error(error);
       reply.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ statusCode: HttpStatus.INTERNAL_SERVER_ERROR, message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
     }
   })
 
-  fastify.get('/selectHcodeDate/:hcode/:date', { preHandler: [fastify.authenticate, fastify.verifyAdmin] }, async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.get('/selectHcodeDate/:hcode/:date', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
     const hcode = req.params.hcode;
     const date = req.params.date;
     try {
       const rs: any = await lvisitModel.selectHcodeDate(db,hcode,date);
-      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK, results: rs })
+      let info: any = [];
+      for(let x of rs) {
+        let data:object = {
+          "vn": x.vn,
+          "hn": x.hn,
+          "cid": x.cid,
+          "vstdttm": x.vstdttm,
+          "icd10": x.icd10,
+          "cc": x.cc,
+          "cln": x.cln,
+          "pttype": x.pttype,
+          "pname": x.pname,
+          "fname": x.fname,
+          "lname": x.lname,
+          "sex": x.sex,
+          "birthdate": x.birthdate,
+          "hcode": x.hcode,
+          "status": x.status,
+          "accepted": x.accepted
+        }
+        await info.push(data);
+      }
+      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK, results: info })
     } catch (error) {
       fastify.log.error(error);
       reply.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ statusCode: HttpStatus.INTERNAL_SERVER_ERROR, message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
     }
   })
 
-  fastify.get('/selectDate/:date', { preHandler: [fastify.authenticate, fastify.verifyAdmin] }, async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.get('/selectDate/:date', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
     const date = req.params.date;
     try {
       const rs: any = await lvisitModel.selectDate(db,date);
-      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK, results: rs })
+      let info: any = [];
+      for(let x of rs) {
+        let data:object = {
+          "vn": x.vn,
+          "hn": x.hn,
+          "cid": x.cid,
+          "vstdttm": x.vstdttm,
+          "icd10": x.icd10,
+          "cc": x.cc,
+          "cln": x.cln,
+          "pttype": x.pttype,
+          "pname": x.pname,
+          "fname": x.fname,
+          "lname": x.lname,
+          "sex": x.sex,
+          "birthdate": x.birthdate,
+          "hcode": x.hcode,
+          "status": x.status,
+          "accepted": x.accepted,
+          "namepttype": x.namepttype,
+          "hosname": x.hosname,
+        }
+        await info.push(data);
+      }
+      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK, results: info })
     } catch (error) {
       fastify.log.error(error);
       reply.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ statusCode: HttpStatus.INTERNAL_SERVER_ERROR, message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
     }
   })
 
-  fastify.get('/selectHcode/:hcode', { preHandler: [fastify.authenticate, fastify.verifyAdmin] }, async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.get('/selectHcode/:hcode', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
     const hcode = req.params.hcode;
     try {
       const rs: any = await lvisitModel.selectHcode(db,hcode);
-      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK, results: rs })
+      let info: any = [];
+      for(let x of rs) {
+        let data:object = {
+          "vn": x.vn,
+          "hn": x.hn,
+          "cid": x.cid,
+          "vstdttm": x.vstdttm,
+          "icd10": x.icd10,
+          "cc": x.cc,
+          "cln": x.cln,
+          "pttype": x.pttype,
+          "pname": x.pname,
+          "fname": x.fname,
+          "lname": x.lname,
+          "sex": x.sex,
+          "birthdate": x.birthdate,
+          "hcode": x.hcode,
+          "status": x.status,
+          "accepted": x.accepted
+        }
+        await info.push(data);
+      }
+      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK, results: info })
     } catch (error) {
       fastify.log.error(error);
       reply.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ statusCode: HttpStatus.INTERNAL_SERVER_ERROR, message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
     }
   })
 
-  fastify.get('/selectHn/:hn', { preHandler: [fastify.authenticate, fastify.verifyAdmin] }, async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.get('/selectHn/:hn', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
     const hn = req.params.hn;
     try {
       const rs: any = await lvisitModel.selectHn(db,hn);
-      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK, results: rs })
+      let info: any = [];
+      for(let x of rs) {
+        let data:object = {
+          "vn": x.vn,
+          "hn": x.hn,
+          "cid": x.cid,
+          "vstdttm": x.vstdttm,
+          "icd10": x.icd10,
+          "cc": x.cc,
+          "cln": x.cln,
+          "pttype": x.pttype,
+          "pname": x.pname,
+          "fname": x.fname,
+          "lname": x.lname,
+          "sex": x.sex,
+          "birthdate": x.birthdate,
+          "hcode": x.hcode,
+          "status": x.status,
+          "accepted": x.accepted
+        }
+        await info.push(data);
+      }
+      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK, results: info })
     } catch (error) {
       fastify.log.error(error);
       reply.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ statusCode: HttpStatus.INTERNAL_SERVER_ERROR, message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
     }
   })
 
-  fastify.post('/', { preHandler: [fastify.authenticate, fastify.verifyAdmin] }, async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.post('/', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
     const hn = req.body.hn;
     const cid = req.body.cid;
     const vstdttm = req.body.vstdttm;
@@ -114,16 +226,15 @@ const router = (fastify, { }, next) => {
 
     try {
      let rs =  await lvisitModel.save(db, info);
-     console.log(rs);
-     
-      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK ,rows:rs[0]})
+      let data:number = rs[0]
+      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK ,rows:data})
     } catch (error) {
       fastify.log.error(error);
       reply.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ statusCode: HttpStatus.INTERNAL_SERVER_ERROR, message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
     }
   })
 
-  fastify.put('/:vn', { preHandler: [fastify.authenticate, fastify.verifyAdmin] }, async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.put('/:vn', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
     const vn = req.params.vn;
     const hn = req.body.hn;
     const cid = req.body.cid;
@@ -164,7 +275,7 @@ const router = (fastify, { }, next) => {
     }
   })
   
-  fastify.delete('/:vn', { preHandler: [fastify.authenticate, fastify.verifyAdmin] }, async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.delete('/:vn', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
     let vn: any = req.params.vn;
     
     let info: any = {
@@ -175,17 +286,15 @@ const router = (fastify, { }, next) => {
 
     try {
       let rs = await lvisitModel.update(db, vn, info);
-      console.log(rs);
-      
-      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK ,rows:rs[0]})
+      let data:number = rs[0]
+      reply.status(HttpStatus.OK).send({ statusCode: HttpStatus.OK ,rows:data})
     } catch (error) {
       fastify.log.error(error);
       reply.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ statusCode: HttpStatus.INTERNAL_SERVER_ERROR, message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
     }
   })
 
-
-  fastify.put('/accepted/:vn', { preHandler: [fastify.authenticate, fastify.verifyAdmin] }, async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.put('/accepted/:vn', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
     const _vn = req.params.vn;
     const info = req.body;
   
@@ -362,8 +471,7 @@ const router = (fastify, { }, next) => {
       reply.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ statusCode: HttpStatus.INTERNAL_SERVER_ERROR, message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
     }
   })
+  
   next();
-
 }
-
 module.exports = router;  

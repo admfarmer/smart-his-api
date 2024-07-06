@@ -31,7 +31,7 @@ export class BotlineModel {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             auth: {
-                bearer: 'i4chgMiyX2EOHdoTPMGgxxPNGqknfFxOn8aWFqFD6Gl', //token
+                bearer: '', //token
                 // bearer: '', //token test code
             },
             form: {

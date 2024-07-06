@@ -3,8 +3,10 @@ import { Knex } from 'knex';
 export class RcptsModel {
   tableName: string = 'rcpt';
 
-  info(db: Knex) {
+  info(db: Knex,limit:number,offset:number) {
     return db(this.tableName)
+    .limit(limit)
+    .offset(offset);
   }
 
   save(db: Knex, info: any) {

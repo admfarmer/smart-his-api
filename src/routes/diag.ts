@@ -10,36 +10,65 @@ const hiOvstModel = new HiOvstModel();
 import { DiagModel } from '../models/diag'
 import * as HttpStatus from 'http-status-codes';
 var cron = require('node-cron');
+import {Validate} from './validation'
 
 const diagModel = new DiagModel();
 const botlineModel = new BotlineModel();
+const validate = new Validate();
 
 const router = (fastify, { }, next) => {
 
     var dbHIS: Knex = fastify.dbHIS;
     var db: Knex = fastify.db;
 
-    fastify.get('/', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.get('/', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         try {
             const rs: any = await diagModel.info(db);
-            reply.code(HttpStatus.OK).send({ info: rs[0] })
+            let info: any = [];
+            for(let x of rs) {
+              let data:object = {
+                "vn": x.vn,
+                "hn": x.hn,
+                "fullname": x.fullname,
+                "sex": x.sex,
+                "age": x.age,
+                "address": x.address,
+                "pttype": x.pttype,
+                "diag": x.diag,
+                "diagname": x.diagname,
+                "symptom": x.symptom,
+                "vstdttm": x.vstdttm,
+                "drxtime": x.drxtime,
+                "update": x.update,
+                "dchtype": x.dchtype          
+              }
+              await info.push(data);
+            }
+            reply.code(HttpStatus.OK).send({ info: info })
         } catch (error) {
             console.log(error);
             reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
         }
     });
 
-    fastify.get('/infoVn', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.get('/infoVn', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         try {
             const rs: any = await diagModel.infoVn(db);
-            reply.code(HttpStatus.OK).send({ info: rs[0] })
+            let info: any = [];
+            for(let x of rs) {
+              let data:object = {
+                "vn": x.vn         
+              }
+              await info.push(data);
+            }
+            reply.code(HttpStatus.OK).send({ info: info })
         } catch (error) {
             console.log(error);
             reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
         }
     });
 
-    fastify.post('/getDiag', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.post('/getDiag', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         const datas = req.body;
         const vn = req.body.vn;
         let info: any;
@@ -66,7 +95,8 @@ const router = (fastify, { }, next) => {
                 // console.log(messages);
                 const rsx: any = await botlineModel.botLine(messages);
                 const rs: any = await diagModel.save(db, datas, vn);
-                reply.code(HttpStatus.OK).send({ info: rs[0] })
+                let data:number = rs[0]
+                reply.code(HttpStatus.OK).send({ info: messages })
             }
         } catch (error) {
             console.log(error);
@@ -74,7 +104,7 @@ const router = (fastify, { }, next) => {
         }
     });
 
-    fastify.get('/lineInfo', async (req: fastify.Request, reply: fastify.Reply) => {
+    fastify.get('/lineInfo', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
         let vn: any = [];
         let vns: any = [];
         let _vn: any = [];
@@ -82,6 +112,8 @@ const router = (fastify, { }, next) => {
         let info: any;
         let item: any = [];
         let items: any = [];
+        let messages: string = '';
+
         try {
             const rxx: any = await diagModel.infoVn(db);
             // console.log(rxx[0]);
@@ -116,12 +148,12 @@ const router = (fastify, { }, next) => {
                         let message8 = v.age;
                         let message9 = v.sex;
                         let message10 = v.symptom;
-                        let messages = `ชื่อ-สกุล:${message1} เพศ:${message9} อายุ:${message8} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] มาด้วยอาการ: ${message10} สถานะ: ${message7} ที่อยู่:${message6}`;
+                        messages = `ชื่อ-สกุล:${message1} เพศ:${message9} อายุ:${message8} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] มาด้วยอาการ: ${message10} สถานะ: ${message7} ที่อยู่:${message6}`;
                         // console.log(messages);
                         items = diagModel.saveInfo(db, v);
                         const rsx: any = botlineModel.botLine(messages);
                     });
-                    reply.code(HttpStatus.OK).send({ info: item })
+                    reply.code(HttpStatus.OK).send({ info: messages })
                 }
             } else {
                 const rs: any = await hiOvstModel.getOvstdx(dbHIS, vn);
@@ -147,11 +179,11 @@ const router = (fastify, { }, next) => {
                         let message8 = v.age;
                         let message9 = v.sex;
                         let message10 = v.symptom;
-                        let messages = `ชื่อ-สกุล:${message1} เพศ:${message9} อายุ:${message8} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] มาด้วยอาการ: ${message10} สถานะ: ${message7} ที่อยู่:${message6}`;
+                        messages = `ชื่อ-สกุล:${message1} เพศ:${message9} อายุ:${message8} ปี วันที่ Dx:${message2} เวลา Dx:${message3} diag:${message4} [ ${message5} ] มาด้วยอาการ: ${message10} สถานะ: ${message7} ที่อยู่:${message6}`;
                         items = diagModel.saveInfo(db, v);
                         const rsx: any = botlineModel.botLine(messages);
                     });
-                    reply.code(HttpStatus.OK).send({ info: item })
+                    reply.code(HttpStatus.OK).send({ info: messages })
                 }
             }
         } catch (error) {
