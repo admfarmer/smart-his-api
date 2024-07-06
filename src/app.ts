@@ -12,10 +12,21 @@ import { Server, IncomingMessage, ServerResponse } from 'http';
 
 import helmet = require('fastify-helmet');
 
-const app: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({ logger: { level: 'info' }, bodyLimit: 5 * 1048576 });
+const app: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({ 
+  logger: false,
+  // logger: { level: "info" },
+  ignoreTrailingSlash: true,
+  maxParamLength: 200,
+  caseSensitive: true,
+  bodyLimit: 5 * 1048576 });
 
 app.register(require('fastify-formbody'));
-app.register(require('fastify-cors'), {});
+app.register(require('fastify-cors'), {
+    // origin: ['localhost:4200', 'referboard.phoubon.in.th'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+    hook: 'preHandler',
+});
 app.register(require('fastify-no-icon'));
 app.register(
   helmet,

@@ -13,7 +13,7 @@ const router = (fastify, { }, next) => {
     reply.code(200).send({ message: 'Welcome to SMART HIS API services!', version: '1.0 build 20190522-1' })
   });
 
-  fastify.get('/info', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
+  fastify.get('/info', async (req: fastify.Request, reply: fastify.Reply) => {
     try {
       const rs: any = await systemModel.getInfo(db);
       let info: any = [];
