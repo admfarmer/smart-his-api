@@ -20,8 +20,8 @@ export class HiOvstModel {
         CONCAT(p.pname,p.fname,' ',p.lname) as fullname
         from ovst as o
         INNER JOIN pt as p on p.hn = o.hn 
-        WHERE date(o.vstdttm) = ${vstdttm} 
-        and o.hn = ${hn} and o.rcptno = '0'`;
+        WHERE date(o.vstdttm) = '${vstdttm}' 
+        and o.hn = '${hn}' and o.rcptno = '0'`;
         return db.raw(sql);
 
     }
