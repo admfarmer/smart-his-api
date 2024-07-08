@@ -212,7 +212,7 @@ const router = (fastify, { }, next) => {
         }
         await info.push(data);
       }
-      reply.code(HttpStatus.OK).send({ info: info[0] })
+      reply.code(HttpStatus.OK).send({ info: info })
     } catch (error) {
       console.log(error);
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
