@@ -2,8 +2,10 @@
 import { Knex } from 'knex';
 import * as fastify from 'fastify';
 import { SystemModel } from '../models/system';
+import { BotTelegramModel } from '../models/bottelegram';
 import * as HttpStatus from 'http-status-codes';
 const systemModel = new SystemModel();
+const botTelegramModel = new BotTelegramModel();
 
 const router = (fastify, { }, next) => {
 
@@ -31,6 +33,19 @@ const router = (fastify, { }, next) => {
       reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
     }
   });
+  fastify.get('/botTelegram/:telegramToken/:chatId/:message', async (req: fastify.Request, reply: fastify.Reply) => {
+    let telegramToken:any = req.params.telegramToken;
+    let chatId:any = req.params.chatId;
+    let message:any = req.params.message;
+    try {
+      const rs: any = await botTelegramModel.sendTelegramMessage(telegramToken,chatId,message);
+      reply.code(HttpStatus.OK).send({ ok:true,info: rs })
+
+    } catch (error) {
+      console.log(error);
+      reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    }
+  })
 
   next();
 

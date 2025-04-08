@@ -26,6 +26,7 @@
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
     "node-cron": "^2.0.3",
+    "node-telegram-bot-api": "^0.66.0",
     "pg": "^7.18.2",
     "random-js": "^2.1.0",
     "request": "^2.88.2"

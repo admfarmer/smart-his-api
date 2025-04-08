@@ -6,11 +6,15 @@ import * as fastify from 'fastify';
 import { LabsModel } from '../models/his/hi_lab';
 import {LabresultModel} from '../models/labresult';
 import { BotlineModel } from '../models/botline'
+import { BotTelegramModel } from '../models/bottelegram';
+
 import * as moment from 'moment';
 
 import * as HttpStatus from 'http-status-codes';
 
 const labsModel = new LabsModel();
+const botTelegramModel = new BotTelegramModel();
+
 const labresultModel = new LabresultModel();
 const botlineModel = new BotlineModel();
 var cron = require('node-cron');
@@ -219,7 +223,10 @@ const router = (fastify, { }, next) => {
                         let messages = `ชื่อ-สกุล : ${fullname} HN : ${hn} | Code Local : ${lab_code_local} | Lab name : ${lab_name} | labresult : ${labresult} [ ${unit} ] | senddate : ${senddate}`;
                         // console.log(messages);
                         items = labresultModel.saveInfo(db, v);
-                        const rsx: any = botlineModel.botLabresultLine(messages);
+                        const rs_line: any = botlineModel.botLabresultLine(messages);
+                        let telegramToken ="8178680362:AAF0SGx2CCLP8ldCaw3X2pBS_4l-zfFsPFM"
+                        let chatId ="-4709105551"
+                        const rs_telegram: any = botTelegramModel.sendTelegramMessage(telegramToken,chatId,messages);
                     });
                     // reply.code(HttpStatus.OK).send({ info: item })
                 }
