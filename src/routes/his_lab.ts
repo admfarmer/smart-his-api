@@ -191,10 +191,12 @@ const router = (fastify, { }, next) => {
                         let unit = v.unit;
                         let senddate = moment(v.senddate).format('YYYY-MM-DD');
 
-                        let messages = `ชื่อ-สกุล : ${fullname} HN : ${hn} | Code Local : ${lab_code_local} | Lab name : ${lab_name} | labresult : ${labresult} [ ${unit} ] | senddate : ${senddate}`;
+                        let messages = `ชื่อ-สกุล : ${fullname} \nHN : ${hn} \nCode Local : ${lab_code_local} \nLab name : ${lab_name} \nlabresult : ${labresult} [ ${unit} ] \nsenddate : ${senddate}`;
                         console.log(messages);
                         items = labresultModel.saveInfo(db, v);
                         // const rsx: any = botlineModel.botLabresultLine(messages);
+                        const rs_notify: any = botlineModel.mophNotify(messages, `Lab Result Notification`, '439487e5324b90dd0b68082cd6ac64c44440d8ad', 'ML5JNGIONAE25QTVMK2SAQ3EE62Q'); // LAB_CRITICAL HC10957
+
                     });
                     // reply.code(HttpStatus.OK).send({ info: item })
                 }
@@ -220,10 +222,12 @@ const router = (fastify, { }, next) => {
                         let unit = v.unit;
                         let senddate = moment(v.senddate).format('YYYY-MM-DD');
 
-                        let messages = `ชื่อ-สกุล : ${fullname} HN : ${hn} | Code Local : ${lab_code_local} | Lab name : ${lab_name} | labresult : ${labresult} [ ${unit} ] | senddate : ${senddate}`;
+                        let messages = `ชื่อ-สกุล : ${fullname} \nHN : ${hn} \nCode Local : ${lab_code_local} \nLab name : ${lab_name} \nlabresult : ${labresult} [ ${unit} ] \nsenddate : ${senddate}`;
                         // console.log(messages);
                         items = labresultModel.saveInfo(db, v);
-                        const rs_line: any = botlineModel.botLabresultLine(messages);
+                        // const rs_line: any = botlineModel.botLabresultLine(messages);
+                        const rs_notify: any = botlineModel.mophNotify(messages, `Lab Result Notification`, '439487e5324b90dd0b68082cd6ac64c44440d8ad', 'ML5JNGIONAE25QTVMK2SAQ3EE62Q'); // LAB_CRITICAL HC10957
+                        
                         let telegramToken ="8178680362:AAF0SGx2CCLP8ldCaw3X2pBS_4l-zfFsPFM"
                         let chatId ="-4709105551"
                         const rs_telegram: any = botTelegramModel.sendTelegramMessage(telegramToken,chatId,messages);
