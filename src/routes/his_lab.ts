@@ -195,7 +195,7 @@ const router = (fastify, { }, next) => {
                         console.log(messages);
                         items = labresultModel.saveInfo(db, v);
                         // const rsx: any = botlineModel.botLabresultLine(messages);
-                        const rs_notify: any = botlineModel.mophNotify(messages, `Lab Result Notification`, '439487e5324b90dd0b68082cd6ac64c44440d8ad', 'ML5JNGIONAE25QTVMK2SAQ3EE62Q'); // LAB_CRITICAL HC10957
+                        // const rs_notify: any = botlineModel.mophNotify(messages, `Lab Result Notification`, '439487e5324b90dd0b68082cd6ac64c44440d8ad', 'ML5JNGIONAE25QTVMK2SAQ3EE62Q'); // LAB_CRITICAL HC10957
 
                     });
                     // reply.code(HttpStatus.OK).send({ info: item })
