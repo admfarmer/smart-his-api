@@ -154,7 +154,7 @@ export class BotlineModel {
         let json_message: any = {
             messages: [
                 {
-                    type: "flex",
+                    type: "text",
                     text: message
                 }
             ]
