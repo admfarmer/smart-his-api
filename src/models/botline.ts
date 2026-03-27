@@ -148,4 +148,45 @@ export class BotlineModel {
         });
     }
 
+        botMophNotify(message: any, client: string, secret: string) {
+        console.log(message);
+
+        let json_message: any = {
+            messages: [
+                {
+                    type: "flex",
+                    text: message
+                }
+            ]
+        };
+
+
+        return new Promise((resolve, reject) => {
+            request(
+                {
+                    method: 'POST',
+                    uri: 'https://morpromt2f.moph.go.th/api/notify/send',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'client-key': client,
+                        'secret-key': secret,
+                    },
+                    body: json_message, // ต้องเป็น { messages: [...] }
+                    json: true,
+                },
+                (err: any, httpResponse: any, body: any) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve({
+                            statusCode: httpResponse.statusCode,
+                            body: body
+                        });
+                    }
+                }
+            );
+        });
+    }
+
+
 }
