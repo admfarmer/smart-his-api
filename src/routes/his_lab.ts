@@ -65,183 +65,113 @@ const router = (fastify, { }, next) => {
         }
     });
 
-    fastify.get('/lineInfo', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
-        let ln: any = [];
-        let vns: any = [];
-        let _vn: any = [];
-        let x: any = [];
-        let info: any;
-        let item: any = [];
-        let items: any = [];
-        let messages:string = '';
-        try {
-            const rxx: any = await labresultModel.infoLn(db);
-            // console.log(rxx);
-            if (rxx[0]) {
-                rxx.forEach(async (v:any) => {
-                    x.push(v.ln)
-                });
-                ln = x;
-            } else {
-                ln = 'NO'
-            }
-            console.log(ln);
-            if (ln === 'NO') {
-                const rs: any = await labsModel.labresult(dbHIS);                
-                item = rs;
-                if (!item) {
-                    console.log('NO');
-                    info = 'NO'
-                    reply.code(HttpStatus.OK).send({ info: 'NO' })
-                }
-                if (info != 'NO') {
-                    console.log('OK');
-                    item.forEach(async (v:any) => {
-                        let hn = v.hn;
-                        let fullname = v.fullname;
-                        let lab_code_local = v.lab_code_local;
-                        let lab_name = v.lab_name;
-                        let labresult = v.labresult;
-                        let unit = v.unit;
-                        let senddate = moment(v.senddate).format('YYYY-MM-DD');
+fastify.get('/lineInfo', { preHandler: [fastify.authenticate] }, async (req: fastify.Request, reply: fastify.Reply) => {
+    let ln: any[] = [];
+    let items: any[] = [];
+    let returnMessages: string[] = []; // ใช้เก็บข้อความทั้งหมดเพื่อส่งกลับใน response
 
-                        messages = `ชื่อ-สกุล:${fullname} HN:${hn} Code Local:${lab_code_local} ปี Lab name :${lab_name} labresult :${labresult}[ ${unit} ] senddate: ${senddate}`;
-                        // console.log(messages);
-                        items = await labresultModel.saveInfo(db, v); 
-                        // console.log(items);
-                                               
-                        // const rsx: any = botlineModel.botLabresultLine(messages);
-                    });
-                    reply.code(HttpStatus.OK).send({ info: messages })
-                }
-            } else {
-                console.log('NO');
-                
-                const rs: any = await labsModel.labResultLn(dbHIS, ln);
-                console.log(rs);
-                
-                item = rs;
-                if (!item) {
-                    console.log('NO');
-                    info = 'NO'
-                    reply.code(HttpStatus.OK).send({ info: 'NO' })
-                }
-                if (info != 'NO') {
-                    console.log('OK');
-                    // console.log(item);
-                    item.forEach(async (v:any) => {
-                        let hn = v.hn;
-                        let fullname = v.fullname;
-                        let lab_code_local = v.lab_code_local;
-                        let lab_name = v.lab_name;
-                        let labresult = v.labresult;
-                        let unit = v.unit;
-                        let senddate = moment(v.senddate).format('YYYY-MM-DD');
-
-                        messages = `ชื่อ-สกุล:${fullname} HN:${hn} Code Local:${lab_code_local} ปี Lab name :${lab_name} labresult :${labresult}[ ${unit} ] senddate: ${senddate}`;
-                        // console.log(messages);
-                        items = await labresultModel.saveInfo(db, v);
-                        // const rsx: any = botlineModel.botLabresultLine(messages);
-                    });
-                    reply.code(HttpStatus.OK).send({ info: messages })
-                }
-            }
-        } catch (error) {
-            console.log(error);
-            reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+    try {
+        // 1. ดึงรายการเลขใบแล็บ (ln) ที่เคยประมวลผลไปแล้วจากฝั่ง App DB
+        const rxx: any = await labresultModel.infoLn(db);
+        
+        if (rxx && rxx.length > 0) {
+            // ดึงค่า ln มารวมเป็น Array ของเลขแล็บ เช่น ['808027', '808037']
+            ln = rxx.map((v: any) => v.ln);
         }
-    });
+
+        let rs: any;
+
+        // 2. ดึงข้อมูลแล็บวิกฤตจากระบบ HIS
+        if (ln.length === 0) {
+            // กรณีที่ยังไม่มีข้อมูลในระบบเลย (ดึงทั้งหมดของวันนี้)
+            rs = await labsModel.labresult(dbHIS);                
+        } else {
+            // กรณีมีข้อมูลเดิมอยู่แล้ว ส่ง Array `ln` ไปเพื่อดึงเฉพาะรายการใหม่ (ใช้คำสั่ง NOT IN ข้างใน Model)
+            rs = await labsModel.labResultLn(dbHIS, ln);
+        }
+
+        // ถ้าไม่มีข้อมูลแล็บวิกฤตใหม่ส่งมาเลย ให้ตอบกลับทันที
+        if (!rs || rs.length === 0) {
+            console.log('NO NEW CRITICAL LABS');
+            return reply.code(HttpStatus.OK).send({ info: 'NO' });
+        }
+
+        console.log(`FOUND ${rs.length} NEW CRITICAL LABS`);
+
+        // 3. วนลูปประมวลผลข้อมูล ** เปลี่ยนจาก forEach เป็น for...of เพื่อให้ await ทำงานถูกต้อง **
+        for (const v of rs) {
+            let hn = v.hn;
+            let fullname = v.fullname;
+            let lab_code_local = v.lab_code_local;
+            let lab_name = v.lab_name;
+            let labresult = v.labresult;
+            let unit = v.unit || '-';
+            let senddate = moment(v.senddate).format('YYYY-MM-DD');
+
+            // จัดรูปแบบข้อความแจ้งเตือน
+            let msg = `ชื่อ-สกุล:${fullname} HN:${hn} Code Local:${lab_code_local} Lab name:${lab_name} labresult:${labresult}[ ${unit} ] senddate: ${senddate}`;
+            returnMessages.push(msg); // เก็บข้อความของคนนี้ลงใน Array
+
+            // บันทึกข้อมูลลงฐานข้อมูลฝั่ง App DB เพื่อป้องกันการดึงซ้ำในรอบถัดไป
+            await labresultModel.saveInfo(db, v); 
+            
+            // 🚀 แนะนำ: เปิดฟังก์ชันไลน์บอทตรงนี้ได้เลยเพื่อให้ส่งเข้า LINE ทันทีที่เจอกรณีวิกฤต
+            // await botlineModel.botLabresultLine(msg);
+        }
+
+        // 4. ส่งข้อความทั้งหมดกลับไปแสดงผล (รวมทุกรายการคั่นด้วยการขึ้นบรรทัดใหม่)
+        reply.code(HttpStatus.OK).send({ info: returnMessages.join('\n') });
+
+    } catch (error) {
+        console.error("Error in /lineInfo:", error);
+        reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ 
+            message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) 
+        });
+    }
+});
     
-    cron.schedule('*/10 * * * *', async function () {
-        console.log('running a task every minute');
-        let ln: any = [];
-        let x: any = [];
-        let info: any;
-        let item: any = [];
-        let items: any = [];
+cron.schedule('*/10 * * * *', async function () {
+        console.log('running a task every 10 minutes');
         try {
+            // 1. ดึงข้อมูลเลขใบแล็บเดิม
             const rxx: any = await labresultModel.infoLn(db);
-            // console.log('infoLn',rxx);
-            if (rxx[0]) {
-                rxx.forEach(v => {
-                    x.push(v.ln)
-                });
-                ln = x;
-            } else {
-                ln = 'NO'
+            const ln = (rxx && rxx.length > 0) ? rxx.map((v: any) => v.ln) : 'NO';
+
+            // 2. ดึงข้อมูลแล็บวิกฤตจาก HIS ตามเงื่อนไข
+            const item: any = (ln === 'NO') 
+                ? await labsModel.labresult(dbHIS) 
+                : await labsModel.labResultLn(dbHIS, ln);
+
+            if (!item || item.length === 0) {
+                console.log('NO NEW DATA');
+                return;
             }
-            // console.log(vn);
-            if (ln === 'NO') {
-                const rs: any = await labsModel.labresult(dbHIS);
-                item = rs;
-                if (!item) {
-                    console.log('NO');
-                    info = 'NO'
-                    // reply.code(HttpStatus.OK).send({ info: 'NO' })
-                }
-                if (info != 'NO') {
-                    console.log('OK');
-                    // console.log(item);
-                    item.forEach((v:any) => {
-                        let hn = v.hn;
-                        let fullname = v.fullname;
-                        let lab_code_local = v.lab_code_local;
-                        let lab_name = v.lab_name;
-                        let labresult = v.labresult;
-                        let unit = v.unit;
-                        let senddate = moment(v.senddate).format('YYYY-MM-DD');
 
-                        let messages = `ชื่อ-สกุล : ${fullname} \nHN : ${hn} \nCode Local : ${lab_code_local} \nLab name : ${lab_name} \nlabresult : ${labresult} [ ${unit} ] \nsenddate : ${senddate}`;
-                        console.log(messages);
-                        items = labresultModel.saveInfo(db, v);
-                        // const rsx: any = botlineModel.botLabresultLine(messages);
-                        // const rs_notify: any = botlineModel.mophNotify(messages, `Lab Result Notification`, '439487e5324b90dd0b68082cd6ac64c44440d8ad', 'ML5JNGIONAE25QTVMK2SAQ3EE62Q'); // LAB_CRITICAL HC10957
+            console.log('OK - PROCESSING ITEMS:', item.length);
 
-                    });
-                    // reply.code(HttpStatus.OK).send({ info: item })
-                }
-            } else {
-                const rs: any = await labsModel.labResultLn(dbHIS, ln);
-                item = rs;
-                console.log('labResultLn',item);
+            // 3. วนลูปบันทึกข้อมูลและส่งแจ้งเตือนแบบเรียงลำดับ (เสถียร 100%)
+            for (const v of item) {
+                const senddate = moment(v.senddate).format('YYYY-MM-DD');
+                const messages = `ชื่อ-สกุล : ${v.fullname} \nHN : ${v.hn} \nCode Local : ${v.lab_code_local} \nLab name : ${v.lab_name} \nlabresult : ${v.labresult} [ ${v.unit || '-'} ] \nsenddate : ${senddate}`;
+                console.log(messages);
 
-                if (!item) {
-                    console.log('NO');
-                    info = 'NO'
-                    // reply.code(HttpStatus.OK).send({ info: 'NO' })
-                }
-                if (info != 'NO') {
-                    console.log('OK');
-                    // console.log(item);
-                    item.forEach((v:any) => {
-                        let hn = v.hn;
-                        let fullname = v.fullname;
-                        let lab_code_local = v.lab_code_local;
-                        let lab_name = v.lab_name;
-                        let labresult = v.labresult;
-                        let unit = v.unit;
-                        let senddate = moment(v.senddate).format('YYYY-MM-DD');
+                // บันทึกข้อมูลลง App DB
+                await labresultModel.saveInfo(db, v);
 
-                        let messages = `ชื่อ-สกุล : ${fullname} \nHN : ${hn} \nCode Local : ${lab_code_local} \nLab name : ${lab_name} \nlabresult : ${labresult} [ ${unit} ] \nsenddate : ${senddate}`;
-                        // console.log(messages);
-                        items = labresultModel.saveInfo(db, v);
-                        // const rs_line: any = botlineModel.botLabresultLine(messages);
-                        const rs_notify: any = botlineModel.mophNotify(messages, `Lab Result Notification`, '439487e5324b90dd0b68082cd6ac64c44440d8ad', 'ML5JNGIONAE25QTVMK2SAQ3EE62Q'); // LAB_CRITICAL HC10957
-                        
-                        let telegramToken ="8178680362:AAF0SGx2CCLP8ldCaw3X2pBS_4l-zfFsPFM"
-                        let chatId ="-4709105551"
-                        const rs_telegram: any = botTelegramModel.sendTelegramMessage(telegramToken,chatId,messages);
-                    });
-                    // reply.code(HttpStatus.OK).send({ info: item })
+                // ส่ง MOPH Notify (ทำทั้งสองเงื่อนไข)
+                await botlineModel.mophNotify(messages, `Lab Result Notification`, '439487e5324b90dd0b68082cd6ac64c44440d8ad', 'ML5JNGIONAE25QTVMK2SAQ3EE62Q');
+
+                // ส่ง Telegram (เฉพาะกรณีที่เคยมีข้อมูล ln เดิมอยู่แล้ว)
+                if (ln !== 'NO') {
+                    const telegramToken = "8178680362:AAF0SGx2CCLP8ldCaw3X2pBS_4l-zfFsPFM";
+                    const chatId = "-4709105551";
+                    await botTelegramModel.sendTelegramMessage(telegramToken, chatId, messages);
                 }
             }
         } catch (error) {
-            console.log(error);
-            // reply.code(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR) })
+            console.error("Cron Job Error: ", error);
         }
     });
     next();
-
-}
 
 module.exports = router;
