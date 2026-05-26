@@ -18,7 +18,7 @@ export class BotlineModel {
             if (err) {
                 console.log(err)
             } else {
-                console.log(body)
+                // console.log(body)
             }
         })
     }
@@ -41,14 +41,14 @@ export class BotlineModel {
             if (err) {
                 console.log(err)
             } else {
-                console.log(body)
+                // console.log(body)
             }
         })
     }
 
         mophNotify(message: any, message_text: string, client: string, secret: string) {
-        console.log(message);
-        console.log(message_text);
+        // console.log(message);
+        // console.log(message_text);
 
         let json_message: any = {
             messages: [
@@ -149,7 +149,7 @@ export class BotlineModel {
     }
 
         botMophNotify(message: any, client: string, secret: string) {
-        console.log(message);
+        // console.log(message);
 
         let json_message: any = {
             messages: [
