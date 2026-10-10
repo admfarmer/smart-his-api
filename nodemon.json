@@ -10,5 +10,5 @@
     "src"
   ],
   "ext": "ts",
-  "exec": "ts-node ./src/app.ts"
+  "exec": "ts-node -r ./shim-slowbuffer.js ./src/app.ts"
 }

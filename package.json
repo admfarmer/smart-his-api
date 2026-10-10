@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "npx ts-node ./src/app.ts",
+    "start": "npx ts-node -r ./shim-slowbuffer.js ./src/app.ts",
     "watch": "npx nodemon",
     "build": "npx tsc"
   },
