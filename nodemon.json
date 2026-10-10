@@ -10,5 +10,8 @@
     "src"
   ],
   "ext": "ts",
+  "env": {
+    "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+  },
   "exec": "ts-node -r ./shim-slowbuffer.js ./src/app.ts"
 }
